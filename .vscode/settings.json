@@ -1,0 +1,13 @@
+{
+    "eslint.validate": ["typescript"],
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
+    "editor.tabSize": 4,
+    "editor.useTabStops": true,
+    "editor.insertSpaces": false,
+    "editor.detectIndentation": false,
+    "editor.formatOnSave": true,
+    "files.eol": "\n",
+    "typescript.tsdk": "node_modules\\typescript\\lib"
+}

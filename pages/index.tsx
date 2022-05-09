@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
@@ -28,7 +28,12 @@ const Home: NextPage = () => {
           Welcome to <span>Guilded.bio</span>
         </h1>
         {session ? (
-          <p>Welcome {session.user!.name}!</p>
+          <>
+            <p>Welcome {session.user!.name}!</p>
+            <button className={styles.login_button} onClick={() => signOut()}>
+              <p>Logout</p>
+            </button>
+          </>
         ) : (
           <button className={styles.login_button} onClick={() => signIn()}>
             <p>Login</p>

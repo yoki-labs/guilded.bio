@@ -2,6 +2,9 @@ module.exports = {
     content: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
     theme: {
         extend: {
+            spacing: {
+                15: "60px",
+            },
             fontFamily: {
                 display: ["Gotham Narrow", "Helvetica", "Arial", "sans-serif"],
                 sans: ["Gotham Narrow", "Helvetica", "Arial", "sans-serif"],

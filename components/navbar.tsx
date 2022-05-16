@@ -1,10 +1,11 @@
-import Image from "next/image";
-
 export default function Navbar() {
   return (
-    <div className="bg-black absolute mx-auto object-top h-15 w-full">
-      <div className="md:pl-20 pt-2.5 align-middle">
-        <Image src="/gbio-logo.png" width="213" height="35" alt="logo" />
+    <div className="bg-guilded-black absolute mx-auto object-top h-15 w-full p-3 flex">
+      <div className="pl-2 md:pl-20 my-auto text-base sm:text-lg md:text-xl select-none">
+        <a href="/">
+          <span className="text-guilded-gilded">guilded</span>
+          <span className="text-white">.bio</span>
+        </a>
       </div>
     </div>
   );

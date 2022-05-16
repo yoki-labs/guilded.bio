@@ -9,7 +9,7 @@ export default function Navbar() {
     return (
         <nav className="rounded px-2 py-2.5 bg-guilded-black sm:px-4">
             <div className="container mx-auto flex flex-wrap items-center justify-between">
-                <div className="self-center whitespace-nowrap pl-2 md:pl-20 my-auto text-base sm:text-lg md:text-xl select-none">
+                <div className="self-center whitespace-nowrap pl-2 md:pl-20 my-auto text-base sm:text-lg md:text-3xl select-none">
                     <Link href="/">
                         <a>
                             <span className="text-guilded-gilded">guilded</span>
@@ -18,7 +18,7 @@ export default function Navbar() {
                     </Link>
                 </div>
                 <div className="w-full md:block md:w-auto" id="mobile-menu">
-                    <ul className="mt-4 items-center flex flex-col sm:text-xs md:mt-0 md:flex-row md:space-x-4 md:text-sm">
+                    <ul className="mt-4 items-center flex flex-col md:mt-0 md:flex-row md:space-x-4 pr-16">
                         <NavbarItem text={"About"} dest={"/about"} />
                         <NavbarItem text={"Users"} dest={"/users"} />
                         <NavbarItem text={"Community"} dest={"/community"} />

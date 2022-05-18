@@ -8,7 +8,7 @@
         "start": "next start",
         "lint": "next lint",
         "prepare": "npx husky install",
-        "prettier": "npx prettier --write **/*.{ts,js,json,yml,yaml,md}"
+        "prettier": "npx prettier --write **/*.{tsx,jsx,ts,js,json,yml,yaml,md}"
     },
     "dependencies": {
         "next": "12.1.6",
@@ -35,7 +35,7 @@
     },
     "prettier": {
         "endOfLine": "auto",
-        "printWidth": 180,
+        "printWidth": 160,
         "semi": true,
         "tabWidth": 4
     }

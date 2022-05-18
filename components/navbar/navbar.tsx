@@ -22,7 +22,7 @@ export default function Navbar() {
                         <NavbarItem text={"About"} dest={"/about"} />
                         <NavbarItem text={"Users"} dest={"/users"} />
                         <NavbarItem text={"Community"} dest={"/community"} />
-                        {session ? <Button onClick={() => signOut()}>Log Out</Button> : <Button onClick={() => signIn()}>Log In</Button>}
+                        <div className="py-2">{session ? <Button onClick={() => signOut()}>Log Out</Button> : <Button onClick={() => signIn()}>Log In</Button>}</div>
                     </ul>
                 </div>
             </div>

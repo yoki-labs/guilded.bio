@@ -29,9 +29,9 @@ export default function Navbar() {
                 </div>
                 <div className={`w-full md:block md:w-auto ${isDropdownActive ? "block" : "hidden"}`} id="mobile-menu">
                     <ul className="mt-4 items-center flex flex-col md:mt-0 md:flex-row md:space-x-4 md:pr-16">
-                        <NavbarItem text={"About"} dest={"/about"} />
-                        <NavbarItem text={"Users"} dest={"/users"} />
-                        <NavbarItem text={"Community"} dest={"/community"} />
+                        <NavbarItem text="About" dest="/about" />
+                        <NavbarItem text="Users" dest="/users" />
+                        <NavbarItem text="Community" dest="/community" />
                         <div className="py-2">
                             {session ? <Button onClick={() => signOut()}>Log Out</Button> : <Button onClick={() => signIn()}>Log In</Button>}
                         </div>

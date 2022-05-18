@@ -9,8 +9,8 @@
     "editor.detectIndentation": false,
     "editor.formatOnSave": true,
     "files.eol": "\n",
-	"editor.quickSuggestions": {
-		"strings": true
-	},
+    "editor.quickSuggestions": {
+        "strings": true
+    },
     "typescript.tsdk": "node_modules\\typescript\\lib"
 }

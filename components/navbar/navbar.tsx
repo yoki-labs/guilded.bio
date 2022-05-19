@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Button from "../button";
 import NavbarItem from "./navbarItem";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
+import YellowButton from "../buttons/yellowButton";
 
 export default function Navbar() {
     const { data: session } = useSession();
@@ -33,7 +33,11 @@ export default function Navbar() {
                         <NavbarItem text="Users" dest="/users" />
                         <NavbarItem text="Community" dest="/community" />
                         <div className="py-2">
-                            {session ? <Button onClick={() => signOut()}>Log Out</Button> : <Button onClick={() => signIn()}>Log In</Button>}
+                            {session ? (
+                                <YellowButton onClick={() => signOut()}>Your Profile</YellowButton>
+                            ) : (
+                                <YellowButton onClick={() => signIn()}>Log In</YellowButton>
+                            )}
                         </div>
                     </ul>
                 </div>

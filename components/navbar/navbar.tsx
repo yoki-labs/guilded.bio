@@ -31,17 +31,22 @@ export default function Navbar() {
                     <ul className="mt-4 items-center flex flex-col md:mt-0 md:flex-row md:space-x-4 md:pr-16">
                         <NavbarItem text="About" dest="/about" />
                         <NavbarItem text="Community" dest="/community" />
-                        <div className="py-2">
-                            {session ? (
-                                <Button color="gilded" onClick={() => signOut()}>
-                                    Your Profile
-                                </Button>
-                            ) : (
+                        {session ? (
+                            <>
+                                <NavbarItem text="Your Profile" dest={`/users/${session.user!.name}`} />
+                                <div className="py-2">
+                                    <Button color="gilded" onClick={() => signOut()}>
+                                        Sign Out
+                                    </Button>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="py-2">
                                 <Button color="gilded" onClick={() => signIn("guilded")}>
                                     Log In
                                 </Button>
-                            )}
-                        </div>
+                            </div>
+                        )}
                     </ul>
                 </div>
             </div>

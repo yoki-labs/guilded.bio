@@ -4,7 +4,7 @@ import Head from "next/head";
 import Footer from "../components/footer";
 import Box from "../components/box";
 import Navbar from "../components/navbar/navbar";
-import BlackButton from "../components/buttons/blackButton";
+import Button from "../components/button";
 import Link from "next/link";
 
 const Home: NextPage = () => {
@@ -21,11 +21,11 @@ const Home: NextPage = () => {
                         <h1 className="text-black text-6xl font-bold">Tell the world about yourself</h1>
                         <div className="py-6">
                             <Link href="/bios/create">
-                                <BlackButton>
+                                <Button color="black">
                                     <p className="font-semibold">
                                         Create your own <span className="text-guilded-gilded">bio</span>
                                     </p>
-                                </BlackButton>
+                                </Button>
                             </Link>
                         </div>
                     </div>

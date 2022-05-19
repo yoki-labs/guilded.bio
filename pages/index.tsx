@@ -20,7 +20,7 @@ const Home: NextPage = () => {
             </Head>
             <Navbar />
             <GiantRectangle>
-                <div className="h-full px-2 mx-auto w-full max-w-3xl text-center py-5 flex">
+                <div className="h-full px-2 mx-auto w-full text-center py-5 flex">
                     <div className="m-auto">
                         <h1 className="text-black text-6xl font-bold">Tell the world about yourself</h1>
                         <div className="py-6">

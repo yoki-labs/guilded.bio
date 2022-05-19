@@ -29,7 +29,6 @@ export default function Navbar() {
                 </div>
                 <div className={`w-full md:block md:w-auto ${isDropdownActive ? "block" : "hidden"}`} id="mobile-menu">
                     <ul className="mt-4 items-center flex flex-col md:mt-0 md:flex-row md:space-x-4 md:pr-16">
-						<NavbarItem text="Home" dest="/" />
                         <NavbarItem text="About" dest="/about" />
                         <NavbarItem text="Community" dest="/community" />
                         {session ? (

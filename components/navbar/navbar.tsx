@@ -30,7 +30,6 @@ export default function Navbar() {
                 <div className={`w-full md:block md:w-auto ${isDropdownActive ? "block" : "hidden"}`} id="mobile-menu">
                     <ul className="mt-4 items-center flex flex-col md:mt-0 md:flex-row md:space-x-4 md:pr-16">
                         <NavbarItem text="About" dest="/about" />
-                        <NavbarItem text="Users" dest="/users" />
                         <NavbarItem text="Community" dest="/community" />
                         <div className="py-2">
                             {session ? (
@@ -38,7 +37,7 @@ export default function Navbar() {
                                     Your Profile
                                 </Button>
                             ) : (
-                                <Button color="gilded" onClick={() => signIn()}>
+                                <Button color="gilded" onClick={() => signIn("guilded")}>
                                     Log In
                                 </Button>
                             )}

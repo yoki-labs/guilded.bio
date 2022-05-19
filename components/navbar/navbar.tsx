@@ -34,9 +34,13 @@ export default function Navbar() {
                         <NavbarItem text="Community" dest="/community" />
                         <div className="py-2">
                             {session ? (
-                                <Button color="gilded" onClick={() => signOut()}>Your Profile</Button>
+                                <Button color="gilded" onClick={() => signOut()}>
+                                    Your Profile
+                                </Button>
                             ) : (
-                                <Button color="gilded" onClick={() => signIn()}>Log In</Button>
+                                <Button color="gilded" onClick={() => signIn()}>
+                                    Log In
+                                </Button>
                             )}
                         </div>
                     </ul>

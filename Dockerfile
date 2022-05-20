@@ -5,6 +5,8 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
+COPY prisma .
+RUN yarn generate
 COPY . .
 
 CMD ["yarn", "dev"]

@@ -5,13 +5,21 @@ export default function SmallCard(props: { id: string; name: string; bio: string
     return (
         <Link href={`/u/${props.id}`}>
             <a>
-                <div className="bg-guilded-slate rounded-md pb-10 h-fit max-w-md mx-auto">
-                    <div className="flex py-4 pl-6">
-                        <Image src={props.iconURL} alt={`${props.name}'s avatar`} className="rounded-full" height="90" width="90"></Image>
-                        <h1 className="pt-6 px-6 text-2xl md:text-3xl font-bold">{props.name}</h1>
+                <div className="bg-guilded-slate rounded-xl p-5 h-fit max-w-md shadow-lg hover:shadow-sm hover:bg-[#24262d] transition">
+                    <div className="flex">
+                        <Image
+                            src={props.iconURL}
+                            alt={`${props.name}'s avatar`}
+                            className="rounded-full my-auto shadow"
+                            height="80"
+                            width="80"
+                        />
+                        <h1 className="my-auto ml-4 text-2xl md:text-3xl font-semibold">{props.name}</h1>
                     </div>
-                    <div className="w-11/12 mx-auto border-t-2 border-guilded-gray" />
-                    <p className="px-6 pt-6 text-clip">{props.bio.length > 198 ? props.bio.slice(0, 198) + "..." : props.bio}</p>
+                    <hr className="mb-2 mt-3 border-guilded-gray border" />
+                    <p className="w-full h-full text-guilded-white text-clip text-left">
+                        {props.bio.length > 198 ? props.bio.slice(0, 198) + "..." : props.bio}
+                    </p>
                 </div>
             </a>
         </Link>

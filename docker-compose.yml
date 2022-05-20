@@ -12,6 +12,7 @@ services:
             - bio-postgres-data:/var/lib/postgresql/data
         ports:
             - 5432:5432
+        env_file: .env.local
     site:
         build:
             context: .
@@ -30,6 +31,7 @@ services:
             DATABASE_URL: "postgresql://bio_user:bio_pass@db:5432/guildedbio?schema=public"
         ports:
             - 3000:3000
+        env_file: .env.local
 
 volumes:
     bio-postgres-data:

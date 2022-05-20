@@ -1,7 +1,6 @@
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import BigCard from "../../components/profile/bigCard";
-import prisma from "../../lib/prisma";
 
 const User: NextPage = () => {
     return (

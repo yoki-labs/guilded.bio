@@ -6,9 +6,11 @@
         "dev": "next dev",
         "build": "next build",
         "generate": "prisma generate",
+        "migrate:dev": "prisma migrate dev --name init",
         "start": "next start",
         "lint": "next lint",
         "prepare": "npx husky install",
+        "vercel-build": "prisma generate && prisma migrate deploy && next build",
         "prettier": "npx prettier --write **/*.{tsx,jsx,ts,js,json,yml,yaml,md}"
     },
     "dependencies": {

@@ -12,7 +12,7 @@ services:
             - bio-postgres-data:/var/lib/postgresql/data
         ports:
             - 5432:5432
-    bot:
+    site:
         build:
             context: .
             dockerfile: ./Dockerfile

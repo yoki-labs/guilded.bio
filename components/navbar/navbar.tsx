@@ -9,7 +9,7 @@ export default function Navbar() {
     const [isDropdownActive, setIsDropdownActive] = useState(false);
 
     return (
-        <nav className="rounded px-2 py-2.5 bg-guilded-black sm:px-4 w-full">
+        <nav className="px-2 py-2.5 bg-guilded-black sm:px-4 w-full">
             <div className="container mx-auto flex flex-wrap items-center justify-between">
                 <div className="whitespace-nowrap pl-2 md:pl-20 my-auto text-4xl md:text-3xl select-none">
                     <Link href="/">

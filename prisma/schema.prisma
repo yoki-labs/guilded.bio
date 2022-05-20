@@ -1,0 +1,23 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id         Int     @id @default(autoincrement())
+    userId     String  @unique @db.VarChar(255)
+    defaultBio String? @db.Text
+    private    Boolean @default(false)
+    bios       Bio[]
+}
+
+model Bio {
+    id       Int    @id @default(autoincrement())
+    serverId String @db.VarChar(255)
+    authorId String @db.VarChar(255)
+    user     User   @relation(fields: [authorId], references: [userId])
+}

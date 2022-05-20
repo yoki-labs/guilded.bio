@@ -26,8 +26,8 @@ const Home: NextPage = () => {
                     </div>
                 </div>
             </div>
-            <div className="bg-guilded-gray text-guilded-white w-full">
-                <div className="h-full text-center py-5 px-16 inline-grid gap-4 md:grid-cols-3">
+            <div className="bg-guilded-gray text-guilded-white w-full flex">
+                <div className="mx-auto text-center py-5 px-16 inline-grid gap-4 md:grid-cols-3">
                     <SmallCard
                         id="pmb0VA"
                         name="nico"

@@ -4,6 +4,7 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "userId" VARCHAR(255) NOT NULL,
     "private" BOOLEAN NOT NULL DEFAULT false,
+    "defaultBioContent" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -14,7 +15,6 @@ CREATE TABLE "Bio" (
     "serverId" VARCHAR(255),
     "authorId" VARCHAR(255) NOT NULL,
     "content" TEXT NOT NULL,
-    "default" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Bio_pkey" PRIMARY KEY ("id")
 );

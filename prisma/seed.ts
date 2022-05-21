@@ -8,7 +8,6 @@ const userData: Prisma.UserCreateInput[] = [
         email: "nico@guilded.bio",
         bios: {
             create: {
-                default: true,
                 serverId: "4R56dNkl",
                 content: "THIS IS A TEST BIO!!!!",
             },
@@ -19,7 +18,6 @@ const userData: Prisma.UserCreateInput[] = [
         email: "shay@guilded.bio",
         bios: {
             create: {
-                default: true,
                 serverId: "4R56dNkl",
                 content: "THIS IS A TEST BIO2!!!!",
             },
@@ -28,9 +26,9 @@ const userData: Prisma.UserCreateInput[] = [
     {
         userId: "0mqNyllA",
         email: "panku@guilded.bio",
+        defaultBioContent: "this is a default bio content",
         bios: {
             create: {
-                default: true,
                 serverId: "4R56dNkl",
                 content: "THIS IS A TEST BIO3!!!!",
             },

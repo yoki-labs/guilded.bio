@@ -13,6 +13,16 @@ const nextConfig = {
             permanent: true,
         },
     ],
+    webpackDevMiddleware: (config) => {
+        config.watchOptions = {
+            poll: 1000,
+            aggregateTimeout: 300,
+        };
+        return config;
+    },
+    images: {
+        domains: ["s3-us-west-2.amazonaws.com"],
+    },
 };
 
 module.exports = nextConfig;

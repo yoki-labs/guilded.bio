@@ -12,7 +12,7 @@ services:
             - bio-postgres-data:/var/lib/postgresql/data
         ports:
             - 5432:5432
-        env_file: .env.local
+        env_file: .env
     site:
         build:
             context: .
@@ -20,18 +20,16 @@ services:
         depends_on:
             - db
         volumes:
-            - "./components:/app/components"
-            - "./lib:/app/lib"
-            - "./pages:/app/pages"
-            - "./public:/app/public"
-            - "./styles:/app/styles"
-            - "./prisma:/app/prisma"
+            - ./:/app
+            - /app/node_modules
+            - /app/.next
         restart: "no"
         environment:
             DATABASE_URL: "postgresql://bio_user:bio_pass@db:5432/guildedbio?schema=public"
+            NEXT_TELEMETRY_DISABLED: 1
         ports:
             - 3000:3000
-        env_file: .env.local
+        env_file: .env
 
 volumes:
     bio-postgres-data:

@@ -1,11 +1,31 @@
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 
 import Button from "../components/button";
 import Link from "next/link";
 import SmallCard from "../components/profile/smallCard";
+import prisma from "../lib/prisma";
+import { User } from "@prisma/client";
+import { fetchUser } from "../lib/api";
+import { GuildedUser } from "../types/user";
 
-const Home: NextPage = () => {
+export const getServerSideProps: GetServerSideProps = async () => {
+    const dbUsers = await prisma.user.findMany({ where: {}, take: 10 });
+    const fetchedUsers = await Promise.all(dbUsers.map((user) => fetchUser(user.userId)));
+    const combinedUsers = [];
+    for (const [index, fetchedUser] of fetchedUsers.entries()) {
+        combinedUsers[index] = { ...dbUsers[index], ...fetchedUser };
+    }
+
+    console.log(combinedUsers.length);
+    return { props: { users: combinedUsers } };
+};
+
+type Props = {
+    users: (User & GuildedUser)[];
+};
+
+const Home: NextPage<Props> = ({ users }: Props) => {
     return (
         <>
             <Head>
@@ -26,64 +46,18 @@ const Home: NextPage = () => {
                     </div>
                 </div>
             </div>
-            <div className="bg-guilded-gray text-guilded-white w-full flex">
+            <div className="bg-guilded-gray text-guilded-white w-full flex min-h-screen">
                 <div className="mx-auto text-center py-5 px-16 inline-grid gap-4 md:grid-cols-3">
-                    <SmallCard
-                        id="pmb0VA"
-                        name="nico"
-                        iconURL="/test-pfp.png"
-                        badges={[]}
-                        bio="biography about me autobiography memoir confessions diary journal profile sketch life story adventures experiences letters saga bio life history personal account personal anecdote personal narrative vita reminiscences self-portrayal annals epic narration recapitulation"
-                    />
-                    <SmallCard
-                        id="pmb0VA"
-                        name="nico"
-                        iconURL="/test-pfp.png"
-                        badges={[]}
-                        bio="biography about me autobiography memoir confessions diary journal profile sketch life story adventures experiences letters saga bio life history personal account personal anecdote personal narrative vita reminiscences self-portrayal annals epic narration recapitulation"
-                    />
-                    <SmallCard
-                        id="pmb0VA"
-                        name="nico"
-                        iconURL="/test-pfp.png"
-                        badges={[]}
-                        bio="biography about me autobiography memoir confessions diary journal profile sketch life story adventures experiences letters saga bio life history personal account personal anecdote personal narrative vita reminiscences self-portrayal annals epic narration recapitulation"
-                    />
-                    <SmallCard
-                        id="pmb0VA"
-                        name="nico"
-                        iconURL="/test-pfp.png"
-                        badges={[]}
-                        bio="biography about me autobiography memoir confessions diary journal profile sketch life story adventures experiences letters saga bio life history personal account personal anecdote personal narrative vita reminiscences self-portrayal annals epic narration recapitulation"
-                    />
-                    <SmallCard
-                        id="pmb0VA"
-                        name="nico"
-                        iconURL="/test-pfp.png"
-                        badges={[]}
-                        bio="biography about me autobiography memoir confessions diary journal profile sketch life story adventures experiences letters saga bio life history personal account personal anecdote personal narrative vita reminiscences self-portrayal annals epic narration recapitulation"
-                    />
-                    <SmallCard
-                        id="pmb0VA"
-                        name="nico"
-                        iconURL="/test-pfp.png"
-                        badges={[]}
-                        bio="biography about me autobiography memoir confessions diary journal profile sketch life story adventures experiences letters saga bio life history personal account personal anecdote personal narrative vita reminiscences self-portrayal annals epic narration recapitulation"
-                    />
-                    <SmallCard
-                        id="pmb0VA"
-                        name="nico"
-                        iconURL="/test-pfp.png"
-                        badges={[]}
-                        bio="biography about me autobiography memoir confessions diary journal profile sketch life story adventures experiences letters saga bio life history personal account personal anecdote personal narrative vita reminiscences self-portrayal annals epic narration recapitulation"
-                    />
-                    <SmallCard
-                        id="pmb0VA"
-                        name="nico"
-                        iconURL="/test-pfp.png"
-                        badges={[]}
-                        bio="biography about me autobiography memoir confessions diary journal profile sketch life story adventures experiences letters saga bio life history personal account personal anecdote personal narrative vita reminiscences self-portrayal annals epic narration recapitulation"
-                    />
+                    {users.map((user) => (
+                        <SmallCard
+                            key={user.id}
+                            id={user.userId}
+                            name={user.name}
+                            iconURL={user.profilePictureLg}
+                            badges={[]}
+                            bio={user.defaultBioContent ?? "No content yet, but we're sure they're a great person!"}
+                        />
+                    ))}
                 </div>
             </div>
         </>

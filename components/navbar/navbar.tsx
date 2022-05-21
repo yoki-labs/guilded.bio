@@ -3,6 +3,7 @@ import NavbarItem from "./navbarItem";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 import Button from "../button";
+import { ModifiedSession } from "../../types/session";
 
 export default function Navbar() {
     const { data: session } = useSession();
@@ -33,7 +34,7 @@ export default function Navbar() {
                         <NavbarItem text="Community" dest="/community" />
                         {session ? (
                             <>
-                                <NavbarItem text="Your Profile" dest={`/users/${session.user!.name}`} />
+                                <NavbarItem text="Your Profile" dest={`/users/${(session.user as ModifiedSession).id}`} />
                                 <div className="py-2">
                                     <Button color="gilded" onClick={() => signOut()}>
                                         Sign Out

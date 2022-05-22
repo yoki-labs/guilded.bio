@@ -9,7 +9,7 @@ datasource db {
 
 model User {
     id           Int     @id @default(autoincrement())
-    email        String  @db.Text
+    email        String  @unique @db.Text
     userId       String  @unique @db.VarChar(255)
     private      Boolean @default(false) @db.Boolean
     defaultBio   Bio?    @relation(fields: [defaultBioId], references: [id], name: "DefaultBio")

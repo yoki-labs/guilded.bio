@@ -5,12 +5,12 @@ import Button from "../components/button";
 import Link from "next/link";
 import SmallCard from "../components/profile/smallCard";
 import prisma from "../lib/prisma";
-import { User } from "@prisma/client";
+import { Bio, User } from "@prisma/client";
 import { fetchUser } from "../lib/api";
-import { GuildedUser } from "../types/user";
+import { GuildedUser, UserWithBio } from "../types/user";
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    const dbUsers = await prisma.user.findMany({ where: {}, take: 10 });
+    const dbUsers = await prisma.user.findMany({ where: {}, take: 10, include: { defaultBio: true } });
     const fetchedUsers = await Promise.all(dbUsers.map((user) => fetchUser(user.userId)));
     const combinedUsers = [];
     for (const [index, fetchedUser] of fetchedUsers.entries()) {
@@ -22,7 +22,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 };
 
 type Props = {
-    users: (User & GuildedUser)[];
+    users: (UserWithBio & GuildedUser)[];
 };
 
 const Home: NextPage<Props> = ({ users }: Props) => {
@@ -55,7 +55,7 @@ const Home: NextPage<Props> = ({ users }: Props) => {
                             name={user.name}
                             iconURL={user.profilePictureLg}
                             badges={[]}
-                            bio={user.defaultBioContent ?? "No content yet, but we're sure they're a great person!"}
+                            bio={user.defaultBio?.content ?? "No content yet, but we're sure they're a great person!"}
                         />
                     ))}
                 </div>

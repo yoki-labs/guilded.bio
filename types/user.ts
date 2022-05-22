@@ -1,3 +1,5 @@
+import { Bio, User } from "@prisma/client";
+
 export interface GuildedUser {
     id: string;
     name: string;
@@ -31,3 +33,5 @@ export interface Alias {
     socialLinkHandle: null;
     playerInfo: null;
 }
+
+export type UserWithBio = User & { defaultBio: Bio | null };

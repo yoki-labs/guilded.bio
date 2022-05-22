@@ -1,27 +1,25 @@
-import { Bio, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import BigCard from "../../components/profile/bigCard";
 import { fetchUser } from "../../lib/api";
 import prisma from "../../lib/prisma";
-import { GuildedUser } from "../../types/user";
+import { GuildedUser, UserWithBio } from "../../types/user";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const { userId } = ctx.params as { userId: string };
-    const storedUser = userId ? await prisma.user.findFirst({ where: { userId } }) : null;
+    const storedUser = userId ? await prisma.user.findFirst({ where: { userId }, include: { defaultBio: true } }) : null;
     const APIUser = storedUser ? await fetchUser(userId) : null;
-    const defaultBio = storedUser ? await prisma.bio.findFirst({ where: { authorId: storedUser.userId } }) : null;
 
-    return { props: { storedUser, APIUser, defaultBio } };
+    return { props: { storedUser, APIUser } };
 };
 
 type Props = {
-    storedUser: User | null;
+    storedUser: UserWithBio | null;
     APIUser: GuildedUser | null;
-    defaultBio: Bio | null;
 };
 
-const User: NextPage<Props> = ({ storedUser, APIUser, defaultBio }: Props) => {
+const UserPage: NextPage<Props> = ({ storedUser, APIUser }: Props) => {
     return (
         <>
             <Head>
@@ -34,7 +32,7 @@ const User: NextPage<Props> = ({ storedUser, APIUser, defaultBio }: Props) => {
                             id={APIUser.id}
                             name={APIUser.name}
                             iconURL={APIUser.profilePictureLg}
-                            bio={defaultBio?.content ?? "Nothing yet, but we're sure they're an amazing person!"}
+                            bio={storedUser.defaultBio?.content ?? "Nothing yet, but we're sure they're an amazing person!"}
                             badges={APIUser.badges}
                         />
                     </div>
@@ -46,4 +44,4 @@ const User: NextPage<Props> = ({ storedUser, APIUser, defaultBio }: Props) => {
     );
 };
 
-export default User;
+export default UserPage;

@@ -8,16 +8,21 @@ datasource db {
 }
 
 model User {
-    id         Int     @id @default(autoincrement())
-    userId     String  @unique @db.VarChar(255)
-    defaultBio String? @db.Text
-    private    Boolean @default(false)
-    bios       Bio[]
+    id           Int     @id @default(autoincrement())
+    email        String  @unique @db.Text
+    userId       String  @unique @db.VarChar(255)
+    private      Boolean @default(false) @db.Boolean
+    defaultBio   Bio?    @relation(fields: [defaultBioId], references: [id], name: "DefaultBio")
+    defaultBioId Int?    @unique
+    bios         Bio[]   @relation("BioAuthor")
+
 }
 
 model Bio {
-    id       Int    @id @default(autoincrement())
-    serverId String @db.VarChar(255)
-    authorId String @db.VarChar(255)
-    user     User   @relation(fields: [authorId], references: [userId])
+    id        Int     @id @default(autoincrement())
+    serverId  String? @db.VarChar(255)
+    authorId  Int     @unique @db.Integer
+    author    User    @relation(fields: [authorId], references: [id], name: "BioAuthor")
+    content   String  @db.Text
+    defaultOf User?   @relation("DefaultBio")
 }

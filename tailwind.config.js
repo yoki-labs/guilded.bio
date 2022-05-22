@@ -4,12 +4,14 @@ module.exports = {
         extend: {
             spacing: {
                 15: "60px",
+                105: "420px",
             },
             fontFamily: {
                 display: ["Gotham Narrow", "Helvetica", "Arial", "sans-serif"],
                 sans: ["Gotham Narrow", "Helvetica", "Arial", "sans-serif"],
                 body: ["Gotham Narrow", "Helvetica", "Arial", "sans-serif"],
                 mono: ["Courier", "monospace"],
+                "open-sans": ["Open Sans", "sans-serif"],
             },
             colors: {
                 guilded: {

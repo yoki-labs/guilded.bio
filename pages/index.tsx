@@ -1,40 +1,66 @@
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
-import { signIn, signOut, useSession } from "next-auth/react";
 
 import Button from "../components/button";
-import Footer from "../components/footer";
-import Navbar from "../components/navbar/navbar";
+import Link from "next/link";
+import SmallCard from "../components/profile/smallCard";
+import prisma from "../lib/prisma";
+import { Bio, User } from "@prisma/client";
+import { fetchUser } from "../lib/api";
+import { GuildedUser, UserWithBio } from "../types/user";
 
-const Home: NextPage = () => {
-    const { data: session } = useSession();
+export const getServerSideProps: GetServerSideProps = async () => {
+    const dbUsers = await prisma.user.findMany({ where: {}, take: 10, include: { defaultBio: true } });
+    const fetchedUsers = await Promise.all(dbUsers.map((user) => fetchUser(user.userId)));
+    const combinedUsers = [];
+    for (const [index, fetchedUser] of fetchedUsers.entries()) {
+        combinedUsers[index] = { ...dbUsers[index], ...fetchedUser };
+    }
 
+    console.log(combinedUsers.length);
+    return { props: { users: combinedUsers } };
+};
+
+type Props = {
+    users: (UserWithBio & GuildedUser)[];
+};
+
+const Home: NextPage<Props> = ({ users }: Props) => {
     return (
-        <div className="bg-guilded-slate text-guilded-white">
+        <>
             <Head>
-                <title>Guilded.bio</title>
-                <meta name="description" content="A platform allowing users to share details about themselves with a simple link." />
+                <title>Guilded.bio - Home</title>
             </Head>
 
-            <Navbar />
-            <div className="h-screen mx-auto w-full max-w-3xl text-center py-5 flex">
+            <div className="w-full py-32 px-8 text-center bg-guilded-gilded">
                 <div className="m-auto">
-                    <h1 className="font-bold text-4xl">
-                        Welcome to <span className="text-guilded-gilded">Guilded.bio</span>
-                    </h1>
-                    {session ? (
-                        <>
-                            <p>Welcome {session.user!.name}!</p>
-                            <Button onClick={() => signOut()}>Logout</Button>
-                        </>
-                    ) : (
-                        <Button onClick={() => signIn()}>Login</Button>
-                    )}
+                    <h1 className="text-black text-6xl font-bold">Tell the world about yourself</h1>
+                    <div className="py-6">
+                        <Link href="/bios/create">
+                            <Button color="black">
+                                <p className="font-semibold">
+                                    Create your own <span className="text-guilded-gilded">bio</span>
+                                </p>
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
             </div>
-
-            <Footer />
-        </div>
+            <div className="bg-guilded-gray text-guilded-white w-full flex min-h-screen">
+                <div className="mx-auto text-center py-5 px-16 inline-grid gap-4 md:grid-cols-3">
+                    {users.map((user) => (
+                        <SmallCard
+                            key={user.id}
+                            id={user.userId}
+                            name={user.name}
+                            iconURL={user.profilePictureLg}
+                            badges={[]}
+                            bio={user.defaultBio?.content ?? "No content yet, but we're sure they're a great person!"}
+                        />
+                    ))}
+                </div>
+            </div>
+        </>
     );
 };
 

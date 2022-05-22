@@ -1,15 +1,16 @@
 import Link from "next/link";
-import Button from "../button";
 import NavbarItem from "./navbarItem";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
+import Button from "../button";
+import { ModifiedSession } from "../../types/session";
 
 export default function Navbar() {
     const { data: session } = useSession();
     const [isDropdownActive, setIsDropdownActive] = useState(false);
 
     return (
-        <nav className="rounded px-2 py-2.5 bg-guilded-black sm:px-4 w-full">
+        <nav className="px-2 py-2.5 bg-guilded-black sm:px-4 w-full">
             <div className="container mx-auto flex flex-wrap items-center justify-between">
                 <div className="whitespace-nowrap pl-2 md:pl-20 my-auto text-4xl md:text-3xl select-none">
                     <Link href="/">
@@ -30,11 +31,23 @@ export default function Navbar() {
                 <div className={`w-full md:block md:w-auto ${isDropdownActive ? "block" : "hidden"}`} id="mobile-menu">
                     <ul className="mt-4 items-center flex flex-col md:mt-0 md:flex-row md:space-x-4 md:pr-16">
                         <NavbarItem text="About" dest="/about" />
-                        <NavbarItem text="Users" dest="/users" />
                         <NavbarItem text="Community" dest="/community" />
-                        <div className="py-2">
-                            {session ? <Button onClick={() => signOut()}>Log Out</Button> : <Button onClick={() => signIn()}>Log In</Button>}
-                        </div>
+                        {session ? (
+                            <>
+                                <NavbarItem text="Your Profile" dest={`/users/${(session.user as ModifiedSession).id}`} />
+                                <div className="py-2">
+                                    <Button color="gilded" onClick={() => signOut()}>
+                                        Sign Out
+                                    </Button>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="py-2">
+                                <Button color="gilded" onClick={() => signIn("guilded")}>
+                                    Log In
+                                </Button>
+                            </div>
+                        )}
                     </ul>
                 </div>
             </div>

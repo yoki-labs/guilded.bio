@@ -1,6 +1,6 @@
 {
     "extends": "next/core-web-vitals",
-	"rules": {
-		"eol-last": ["warn", "always"]
-	}
+    "rules": {
+        "eol-last": ["warn", "always"]
+    }
 }

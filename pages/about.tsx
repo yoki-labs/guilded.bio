@@ -19,8 +19,11 @@ const About: NextPage = () => {
                         Guilded simply didn't suffice as a proper place to introduce yourself for a variety of reasons. Posts were prone to getting buried,
                         which made it difficult for users to find your introduction post. There was a lack of a per-server profile feature, allowing people to
                         disclose certain information to certain servers, and no place to put information like servers that you own, servers that you moderate,
-                        and more. We derive inspiration from other platforms like <a className="text-guilded-link" href="https://discord.bio">discord.bio</a>.
-                        We are built using{" "}
+                        and more. We derive inspiration from other platforms like{" "}
+                        <a className="text-guilded-link" href="https://discord.bio">
+                            discord.bio
+                        </a>
+                        . We are built using{" "}
                         <a className="text-guilded-link" href="https://nextjs.org/">
                             Next.js
                         </a>
@@ -31,7 +34,8 @@ const About: NextPage = () => {
                         , and{" "}
                         <a className="text-guilded-link" href="https://reactjs.org/">
                             React
-                        </a>.
+                        </a>
+                        .
                     </p>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { Bio, User } from "@prisma/client";
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
@@ -8,25 +8,52 @@ import { ModifiedSession } from "../../types/session";
 import NameBadge from "../../components/profile/nameBadge";
 import { fetchUser } from "../../lib/api";
 import prisma from "../../lib/prisma";
-import { GuildedUser, UserWithBio } from "../../types/user";
+import { GuildedUser } from "../../types/user";
+import { useState } from "react";
+import Button from "../../components/button";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const { userId } = ctx.params as { userId: string };
     const storedUser = userId ? await prisma.user.findFirst({ where: { userId }, include: { defaultBio: true } }) : null;
     const APIUser = storedUser ? await fetchUser(userId) : null;
 
-    return { props: { storedUser, APIUser } };
+    return { props: { user: APIUser, bio: storedUser?.defaultBio } };
 };
 
 type Props = {
-    storedUser: UserWithBio | null;
-    APIUser: GuildedUser | null;
+    user: GuildedUser;
+    bio: Bio | null;
 };
 
-const UserPage: NextPage<Props> = ({ storedUser, APIUser }: Props) => {
+const UserPage: NextPage<Props> = ({ user, bio }) => {
     const { data: session } = useSession();
+    const [isInEditingMode, setIsInEditingMode] = useState(false);
+    const [newBioContent, setNewBioContent] = useState("");
+    const [bioContent, setBioContent] = useState(bio?.content);
+    const handleSubmit = async (event: any) => {
+        // Stop the form from submitting and refreshing the page.
+        event.preventDefault();
 
-    if (!storedUser || !APIUser) {
+        if (!event.target) return;
+
+        // Send the form data to our forms API on Vercel and get a response.
+        const response = await fetch(bio ? `/api/users/${user.id}/bios/${bio.id}` : `/api/users/${user.id}/bios`, {
+            method: bio ? "PUT" : "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            // author: 1 is a placeholder for now until i get auth on the API settled.
+            body: JSON.stringify(bio ? { content: newBioContent } : { content: newBioContent, default: true, author: 1 }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) return alert(`Error!: ${data.error.message}`);
+        setIsInEditingMode(false);
+        setBioContent(newBioContent);
+        return true;
+    };
+
+    if (!user) {
         return (
             <>
                 <Head>
@@ -37,38 +64,51 @@ const UserPage: NextPage<Props> = ({ storedUser, APIUser }: Props) => {
                 </div>
             </>
         );
-    };
-    const isCurrentUser = session && APIUser.id === (session.user as ModifiedSession).id;
-    const badges: string[] = APIUser.badges;
+    }
+    const isCurrentUser = session && user.id === (session.user as ModifiedSession).id;
+    const badges: string[] = user.badges;
     return (
         <>
             <Head>
-                <title>Guilded.bio - {APIUser.name}</title>
+                <title>Guilded.bio - {user.name}</title>
             </Head>
             <div className="bg-guilded-gray text-guilded-white w-full min-h-screen">
                 <div className="mx-auto max-w-2xl py-8 px-4">
-                    <div className="bg-guilded-slate rounded-xl p-5 sm:px-7 sm:px-8 shadow">
+                    <div className="bg-guilded-slate rounded-xl p-5 sm:px-8 shadow">
                         <div className="flex">
-                            <Image src={APIUser.profilePicture} alt={`${APIUser.name}'s avatar`} className="rounded-full" height="120" width="120" />
+                            <Image src={user.profilePicture} alt={`${user.name}'s avatar`} className="rounded-full" height="120" width="120" />
                             <div className="my-auto flex">
-                                <h1 className="pl-6 pr-3 text-2xl md:text-3xl font-bold">{APIUser.name}</h1>
-                                {isCurrentUser && (
-                                    <NameBadge text="You" color="blue" />
+                                <h1 className="pl-6 pr-3 text-2xl md:text-3xl font-bold">{user.name}</h1>
+                                {isCurrentUser && <NameBadge text="You" color="blue" />}
+                                {(session?.user as ModifiedSession)?.id === user.id && (
+                                    <>
+                                        <br />
+                                        <Button onClick={() => setIsInEditingMode(!isInEditingMode)}>Edit</Button>
+                                    </>
                                 )}
                             </div>
                         </div>
-                        <hr className="border border-guilded-gray my-4" />
-                        {storedUser.defaultBio?.content
-                            ? (
-                                <p className="text-clip">
-                                    {storedUser.defaultBio?.content}
-                                </p>
-                            ) : (
-                                <p className="italic text-guilded-subtitle">
-                                    No content yet, but we&apos;re sure they&apos;re an amazing person!
-                                </p>
-                            )
-                        }
+                        <hr className="border border-guilded-gray mt-4 mb-2" />
+                        {isInEditingMode ? (
+                            <form onSubmit={handleSubmit}>
+                                <div className="text-white flex flex-wrap">
+                                    <textarea
+                                        id="newBioContent"
+                                        defaultValue={bio?.content ?? ""}
+                                        maxLength={250}
+                                        onChange={(data) => setNewBioContent(data.target.value)}
+                                        className="w-full px-2 pt-3 pb-40 rounded-lg bg-guilded-gray resize-none overflow-hidden"
+                                    />
+                                </div>
+                                <div className="pt-2">
+                                    <Button>Save</Button>
+                                </div>
+                            </form>
+                        ) : bio?.content ? (
+                            <p className="text-clip px-2 pt-3">{bioContent}</p>
+                        ) : (
+                            <p className="italic text-guilded-subtitle">No content yet, but we&apos;re sure they&apos;re an amazing person!</p>
+                        )}
                     </div>
                 </div>
             </div>

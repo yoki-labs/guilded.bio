@@ -17,7 +17,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
         combinedUsers[index] = { ...dbUsers[index], ...fetchedUser };
     }
 
-    console.log(combinedUsers.length);
     return { props: { users: combinedUsers } };
 };
 

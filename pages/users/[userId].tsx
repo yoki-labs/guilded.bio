@@ -9,7 +9,7 @@ import NameBadge from "../../components/profile/nameBadge";
 import { fetchUser } from "../../lib/api";
 import prisma from "../../lib/prisma";
 import { GuildedUser } from "../../types/user";
-import { useState } from "react";
+import { MouseEventHandler, useState } from "react";
 import Button from "../../components/button";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -24,6 +24,17 @@ type Props = {
     user: GuildedUser;
     bio: Bio | null;
 };
+
+function ToolbarButton(props: { icon: string, onClick: MouseEventHandler }) {
+    return (
+        <button
+            className="pt-0.5 pb-0 px-1 rounded bg-guilded-gray text-guilded-subtitle hover:text-guilded-white transition-colors"
+            onClick={props.onClick}
+        >
+            <i className={`ci-${props.icon}`} />
+        </button>
+    )
+}
 
 const UserPage: NextPage<Props> = ({ user, bio }) => {
     const { data: session } = useSession();
@@ -115,13 +126,11 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                     <p className="italic text-guilded-subtitle">No content yet, but we&apos;re sure they&apos;re an amazing person!</p>
                                 )}
                                 {isCurrentUser && (
-                                    <div className="ml-auto text-xl text-guilded-subtitle border-l-2 border-l-guilded-gray px-2 -mt-2 pt-2">
-                                        <button
-                                            className="hover:text-guilded-white transition-colors"
+                                    <div className="ml-auto text-xl pl-4">
+                                        <ToolbarButton
+                                            icon="edit"
                                             onClick={() => {setIsInEditingMode(true)}}
-                                        >
-                                            <i className="ci-edit" />
-                                        </button>
+                                        />
                                     </div>
                                 )}
                             </div>

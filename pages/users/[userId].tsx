@@ -108,7 +108,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                 <div className="pt-2">
                                     <Button>Save</Button>
                                     <button
-                                        form={null}
+                                        form=""
                                         className="ml-3 font-bold text-guilded-subtitle hover:text-guilded-white transition-colors"
                                         onClick={() => {
                                             setIsInEditingMode(false)

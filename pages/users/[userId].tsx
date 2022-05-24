@@ -80,12 +80,6 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                             <div className="my-auto flex">
                                 <h1 className="pl-6 pr-3 text-2xl md:text-3xl font-bold">{user.name}</h1>
                                 {isCurrentUser && <NameBadge text="You" color="blue" />}
-                                {(session?.user as ModifiedSession)?.id === user.id && (
-                                    <>
-                                        <br />
-                                        <Button onClick={() => setIsInEditingMode(!isInEditingMode)}>Edit</Button>
-                                    </>
-                                )}
                             </div>
                         </div>
                         <hr className="border border-guilded-gray mt-4 mb-2" />
@@ -102,12 +96,35 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                 </div>
                                 <div className="pt-2">
                                     <Button>Save</Button>
+                                    <button
+                                        form={null}
+                                        className="ml-3 font-bold text-guilded-subtitle hover:text-guilded-white transition-colors"
+                                        onClick={() => {
+                                            setIsInEditingMode(false)
+                                        }}
+                                    >
+                                        Cancel
+                                    </button>
                                 </div>
                             </form>
-                        ) : bio?.content ? (
-                            <p className="text-clip px-2 pt-3">{bioContent}</p>
                         ) : (
-                            <p className="italic text-guilded-subtitle">No content yet, but we&apos;re sure they&apos;re an amazing person!</p>
+                            <div className="flex">
+                                {bio?.content ? (
+                                    <p className="text-clip px-2 pt-3">{bioContent}</p>
+                                ) : (
+                                    <p className="italic text-guilded-subtitle">No content yet, but we&apos;re sure they&apos;re an amazing person!</p>
+                                )}
+                                {isCurrentUser && (
+                                    <div className="ml-auto text-xl text-guilded-subtitle border-l-2 border-l-guilded-gray px-2 -mt-2 pt-2">
+                                        <button
+                                            className="hover:text-guilded-white transition-colors"
+                                            onClick={() => {setIsInEditingMode(true)}}
+                                        >
+                                            <i className="ci-edit" />
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         )}
                     </div>
                 </div>

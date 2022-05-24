@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('coolicons.css');
+
 @layer base {
     h1,
     h2,

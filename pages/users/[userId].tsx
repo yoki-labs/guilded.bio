@@ -42,8 +42,8 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
             headers: {
                 "Content-Type": "application/json",
             },
-            // author: 1 is a placeholder for now until i get auth on the API settled.
-            body: JSON.stringify(bio ? { content: newBioContent } : { content: newBioContent, default: true, author: 1 }),
+            // author: user.id is a placeholder for now until i get auth on the API settled.
+            body: JSON.stringify(bio ? { content: newBioContent } : { content: newBioContent, default: true, author: user.id }),
         });
 
         const data = await response.json();

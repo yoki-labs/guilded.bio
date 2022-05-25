@@ -127,6 +127,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                         className="ml-3 font-bold text-guilded-subtitle hover:text-guilded-white transition-colors"
                                         onClick={() => {
                                             setIsInEditingMode(false);
+											setNewBioContent('');
                                         }}
                                     >
                                         Cancel

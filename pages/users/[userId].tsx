@@ -1,4 +1,3 @@
-import { User } from "@prisma/client";
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
@@ -8,7 +7,7 @@ import { ModifiedSession } from "../../types/session";
 import NameBadge from "../../components/profile/nameBadge";
 import { fetchUser } from "../../lib/api";
 import prisma from "../../lib/prisma";
-import { GuildedUser, UserWithBio } from "../../types/user";
+import { BadgeInfo, GuildedUser, UserWithBio, BadgeName, badgeMap } from "../../types/user";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const { userId } = ctx.params as { userId: string };
@@ -37,9 +36,11 @@ const UserPage: NextPage<Props> = ({ storedUser, APIUser }: Props) => {
                 </div>
             </>
         );
-    };
+    }
+
     const isCurrentUser = session && APIUser.id === (session.user as ModifiedSession).id;
-    const badges: string[] = APIUser.badges;
+    const badges: BadgeInfo[] = APIUser.badges.map((b) => badgeMap[b as BadgeName]).filter((b): b is Exclude<BadgeInfo, null | undefined | "" | 0> => !!b);
+
     return (
         <>
             <Head>
@@ -49,26 +50,24 @@ const UserPage: NextPage<Props> = ({ storedUser, APIUser }: Props) => {
                 <div className="mx-auto max-w-2xl py-8 px-4">
                     <div className="bg-guilded-slate rounded-xl p-5 sm:px-7 sm:px-8 shadow">
                         <div className="flex">
-                            <Image src={APIUser.profilePicture} alt={`${APIUser.name}'s avatar`} className="rounded-full" height="120" width="120" />
-                            <div className="my-auto flex">
-                                <h1 className="pl-6 pr-3 text-2xl md:text-3xl font-bold">{APIUser.name}</h1>
-                                {isCurrentUser && (
-                                    <NameBadge text="You" color="blue" />
-                                )}
+                            <Image src={APIUser.profilePicture} alt={`${APIUser.name}'s avatar`} className="rounded-full shadow-md" height="120" width="120" />
+                            <div className="flex flex-col pl-6 my-auto">
+                                <div className="flex">
+                                    <h1 className="pr-3 text-2xl md:text-3xl font-bold">{APIUser.name}</h1>
+                                    {isCurrentUser && <NameBadge text="You" color="blue" />}
+                                    {badges.map((b) => (
+                                        <NameBadge key={b.iconUrl} iconURL={b.iconUrl} text={b.label} color={b.color} />
+                                    ))}
+                                </div>
+                                <div></div>
                             </div>
                         </div>
                         <hr className="border border-guilded-gray my-4" />
-                        {storedUser.defaultBio?.content
-                            ? (
-                                <p className="text-clip">
-                                    {storedUser.defaultBio?.content}
-                                </p>
-                            ) : (
-                                <p className="italic text-guilded-subtitle">
-                                    No content yet, but we&apos;re sure they&apos;re an amazing person!
-                                </p>
-                            )
-                        }
+                        {storedUser.defaultBio?.content ? (
+                            <p className="text-clip">{storedUser.defaultBio?.content}</p>
+                        ) : (
+                            <p className="italic text-guilded-subtitle">No content yet, but we&apos;re sure they&apos;re an amazing person!</p>
+                        )}
                     </div>
                 </div>
             </div>

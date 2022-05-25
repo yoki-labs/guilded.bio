@@ -118,6 +118,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                         onChange={(data) => setNewBioContent(data.target.value)}
                                         className="w-full px-3 pt-3 pb-40 rounded-lg bg-guilded-gray resize-none"
                                     />
+									<p className="text-guilded-subtitle">Character limit {newBioContent?.length ? newBioContent.length : bioContent?.length}/250</p>
                                 </div>
                                 <div className="pt-4">
                                     <Button>Save</Button>
@@ -135,7 +136,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                         ) : (
                             <div className="flex">
                                 {bio?.content ? (
-                                    <p className="text-clip break-all">{bioContent}</p>
+                                    <p className="text-clip break-all whitespace-pre-wrap">{bioContent}</p>
                                 ) : (
                                     <p className="italic text-guilded-subtitle break-all">
                                         No content yet, but we&apos;re sure they&apos;re an amazing person!

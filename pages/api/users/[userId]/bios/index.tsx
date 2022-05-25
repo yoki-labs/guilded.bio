@@ -7,7 +7,7 @@ const CreateDefaultBioRoute = async (req: NextApiRequest, res: NextApiResponse) 
         if (!content) return res.status(400).json({ error: { message: "You must provide content to set this bio to!" } });
 
         // "this is a placeholder for now until i get auth in place"
-        const author = await prisma.user.findFirst({ where: { id: req.body.author } });
+        const author = await prisma.user.findFirst({ where: { userId: req.body.author } });
         try {
             const bio = await prisma.bio.create({
                 data: {

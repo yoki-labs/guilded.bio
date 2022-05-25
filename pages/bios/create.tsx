@@ -4,8 +4,6 @@ import { ModifiedSession } from "../../types/session";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const user = (await getSession({ req: context.req }))?.user as ModifiedSession | undefined;
-    console.log(user);
-
     if (!user?.id) {
         return {
             redirect: {

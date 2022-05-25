@@ -1,3 +1,4 @@
+import { Bio } from "@prisma/client";
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
@@ -7,53 +8,88 @@ import { ModifiedSession } from "../../types/session";
 import NameBadge from "../../components/profile/nameBadge";
 import { fetchUser } from "../../lib/api";
 import prisma from "../../lib/prisma";
-import { BadgeInfo, GuildedUser, UserWithBio, BadgeName, badgeMap } from "../../types/user";
+import { BadgeInfo, GuildedUser, BadgeName, badgeMap } from "../../types/user";
+import { MouseEventHandler, useState } from "react";
+import Button from "../../components/button";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const { userId } = ctx.params as { userId: string };
     const storedUser = userId ? await prisma.user.findFirst({ where: { userId }, include: { defaultBio: true } }) : null;
     const APIUser = storedUser ? await fetchUser(userId) : null;
 
-    return { props: { storedUser, APIUser } };
+    return { props: { user: APIUser, bio: storedUser?.defaultBio ?? null } };
 };
 
 type Props = {
-    storedUser: UserWithBio | null;
-    APIUser: GuildedUser | null;
+    user: GuildedUser;
+    bio: Bio | null;
 };
 
-const UserPage: NextPage<Props> = ({ storedUser, APIUser }: Props) => {
-    const { data: session } = useSession();
+function ToolbarButton(props: { icon: string; onClick: MouseEventHandler }) {
+    return (
+        <button className="pt-0.5 pb-0 px-1 rounded bg-guilded-gray text-guilded-subtitle hover:text-guilded-white transition-colors" onClick={props.onClick}>
+            <i className={`ci-${props.icon}`} />
+        </button>
+    );
+}
 
-    if (!storedUser || !APIUser) {
+const UserPage: NextPage<Props> = ({ user, bio }) => {
+    const { data: session } = useSession();
+    const [isInEditingMode, setIsInEditingMode] = useState(false);
+    const [newBioContent, setNewBioContent] = useState("");
+    const [bioContent, setBioContent] = useState(bio?.content);
+    const handleSubmit = async (event: any) => {
+        // Stop the form from submitting and refreshing the page.
+        event.preventDefault();
+
+        if (!event.target) return;
+
+        // Send the form data to our forms API on Vercel and get a response.
+        const response = await fetch(bio ? `/api/users/${user.id}/bios/${bio.id}` : `/api/users/${user.id}/bios`, {
+            method: bio ? "PUT" : "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            // author: user.id is a placeholder for now until i get auth on the API settled.
+            body: JSON.stringify(bio ? { content: newBioContent } : { content: newBioContent, default: true, author: user.id }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) return alert(`Error!: ${data.error.message}`);
+        setIsInEditingMode(false);
+        setBioContent(newBioContent);
+        return true;
+    };
+
+    if (!user) {
         return (
             <>
                 <Head>
                     <title>Guilded.bio - 404</title>
                 </Head>
-                <div className="bg-guilded-gray text-guilded-white w-full min-h-screen">
-                    <h1>404</h1>
+                <div className="bg-guilded-gray text-guilded-white w-full min-h-screen flex">
+                    <h1 className="text-6xl font-bold mx-auto pt-20 px-8">404, that user doesn&apos;t exist!</h1>
                 </div>
             </>
         );
     }
 
-    const isCurrentUser = session && APIUser.id === (session.user as ModifiedSession).id;
-    const badges: BadgeInfo[] = APIUser.badges.map((b) => badgeMap[b as BadgeName]).filter((b): b is Exclude<BadgeInfo, null | undefined | "" | 0> => !!b);
+    const isCurrentUser = session && user.id === (session.user as ModifiedSession).id;
+    const badges: BadgeInfo[] = user.badges.map((b) => badgeMap[b as BadgeName]).filter((b): b is Exclude<BadgeInfo, null | undefined | "" | 0> => !!b);
 
-    return (
+	return (
         <>
             <Head>
-                <title>Guilded.bio - {APIUser.name}</title>
+                <title>Guilded.bio - {user.name}</title>
             </Head>
             <div className="bg-guilded-gray text-guilded-white w-full min-h-screen">
                 <div className="mx-auto max-w-2xl py-8 px-4">
-                    <div className="bg-guilded-slate rounded-xl p-5 sm:px-7 sm:px-8 shadow">
+                    <div className="bg-guilded-slate rounded-xl p-5 sm:px-8 shadow">
                         <div className="flex">
-                            <Image src={APIUser.profilePicture} alt={`${APIUser.name}'s avatar`} className="rounded-full shadow-md" height="120" width="120" />
+                            <Image src={user.profilePicture} alt={`${user.name}'s avatar`} className="rounded-full shadow-md" height="120" width="120" />
                             <div className="flex flex-col pl-6 my-auto">
                                 <div className="flex">
-                                    <h1 className="pr-3 text-2xl md:text-3xl font-bold">{APIUser.name}</h1>
+                                    <h1 className="pr-3 text-2xl md:text-3xl font-bold">{user.name}</h1>
                                     {isCurrentUser && <NameBadge text="You" color="blue" />}
                                     {badges.map((b) => (
                                         <NameBadge key={b.iconUrl} iconURL={b.iconUrl} text={b.label} color={b.color} />
@@ -62,11 +98,51 @@ const UserPage: NextPage<Props> = ({ storedUser, APIUser }: Props) => {
                                 <div></div>
                             </div>
                         </div>
-                        <hr className="border border-guilded-gray my-4" />
-                        {storedUser.defaultBio?.content ? (
-                            <p className="text-clip">{storedUser.defaultBio?.content}</p>
+                        <hr className="border border-guilded-gray mt-4 mb-2" />
+                        {isInEditingMode ? (
+                            <form onSubmit={handleSubmit}>
+                                <div className="text-white flex flex-wrap">
+                                    <textarea
+                                        id="newBioContent"
+                                        defaultValue={bio?.content ? bioContent : ""}
+                                        maxLength={250}
+                                        onChange={(data) => setNewBioContent(data.target.value)}
+                                        className="w-full px-3 pt-3 pb-40 rounded-lg bg-guilded-gray resize-none overflow-hidden"
+                                    />
+                                </div>
+                                <div className="pt-2">
+                                    <Button>Save</Button>
+                                    <button
+                                        form=""
+                                        className="ml-3 font-bold text-guilded-subtitle hover:text-guilded-white transition-colors"
+                                        onClick={() => {
+                                            setIsInEditingMode(false);
+                                        }}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
                         ) : (
-                            <p className="italic text-guilded-subtitle">No content yet, but we&apos;re sure they&apos;re an amazing person!</p>
+                            <div className="flex">
+                                {bio?.content ? (
+                                    <p className="text-clip break-all">{bioContent}</p>
+                                ) : (
+                                    <p className="italic text-guilded-subtitle break-all">
+                                        No content yet, but we&apos;re sure they&apos;re an amazing person!
+                                    </p>
+                                )}
+                                {isCurrentUser && (
+                                    <div className="ml-auto text-xl pl-4">
+                                        <ToolbarButton
+                                            icon="edit"
+                                            onClick={() => {
+                                                setIsInEditingMode(true);
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                            </div>
                         )}
                     </div>
                 </div>

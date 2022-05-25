@@ -21,14 +21,14 @@ async function main() {
         ],
     });
     console.log(`Created ${users.count} users.`);
-    const nico = await prisma.user.findFirst({ where: { email: "nico@guilded.bio" } });
-    const nicoDefaultBio = await prisma.bio.create({
+    const panku = await prisma.user.findFirst({ where: { email: "panku@guilded.bio" } });
+    const pankuDefaultBio = await prisma.bio.create({
         data: {
-            authorId: nico!.id,
+            authorId: panku!.id,
             content: "This is a default bio!",
         },
     });
-    await prisma.user.update({ where: { id: nico!.id }, data: { defaultBioId: nicoDefaultBio.id } });
+    await prisma.user.update({ where: { id: panku!.id }, data: { defaultBioId: pankuDefaultBio.id } });
 }
 
 main()

@@ -118,7 +118,16 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                         onChange={(data) => setNewBioContent(data.target.value)}
                                         className="w-full px-3 pt-3 pb-40 rounded-lg bg-guilded-gray resize-none"
                                     />
-									<p className="text-guilded-subtitle">Character limit {newBioContent?.length ? newBioContent.length : bioContent?.length}/250</p>
+									<p className={`ml-auto ${newBioContent?.length === 250 ? "font-bold" : ""} ${
+                                        newBioContent?.length >= 200
+                                        ? "text-red-400/70"
+                                        : newBioContent?.length >= 100
+                                            ? "text-guilded-gilded/70"
+                                            : "text-guilded-white/70"
+                                        }`}
+                                    >
+                                        {newBioContent?.length ? newBioContent.length : bioContent?.length}/250
+                                    </p>
                                 </div>
                                 <div className="pt-4">
                                     <Button>Save</Button>

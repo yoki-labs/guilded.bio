@@ -13,7 +13,7 @@ export interface GuildedUser {
     profileBannerLg: string;
     profileBannerSm: string;
     aboutInfo: AboutInfo;
-    badges: string[];
+    badges: BadgeName[];
     createdAt: string;
 }
 
@@ -35,3 +35,19 @@ export interface Alias {
 }
 
 export type UserWithBio = User & { defaultBio: Bio | null };
+
+export interface BadgeInfo {
+    iconUrl: string;
+    label: string;
+    color: string;
+}
+
+const partnerBadge: BadgeInfo = { iconUrl: "/partner-badge.png", label: "", color: "blue" };
+const guildedStaff: BadgeInfo = { iconUrl: "/staff-badge.png", label: "Staff", color: "" };
+
+export const badgeMap = {
+    PartnerBadge: partnerBadge,
+    GuildedStaff: guildedStaff,
+} as const;
+
+export type BadgeName = keyof typeof badgeMap;

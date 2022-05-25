@@ -96,10 +96,10 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                 <div className="text-white flex flex-wrap">
                                     <textarea
                                         id="newBioContent"
-                                        defaultValue={bio?.content ?? ""}
+                                        defaultValue={bio?.content ? bioContent : ""}
                                         maxLength={250}
                                         onChange={(data) => setNewBioContent(data.target.value)}
-                                        className="w-full px-2 pt-3 pb-40 rounded-lg bg-guilded-gray resize-none overflow-hidden"
+                                        className="w-full px-3 pt-3 pb-40 rounded-lg bg-guilded-gray resize-none overflow-hidden"
                                     />
                                 </div>
                                 <div className="pt-2">
@@ -118,7 +118,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                         ) : (
                             <div className="flex">
                                 {bio?.content ? (
-                                    <p className="text-clip px-2 pt-3 break-all">{bioContent}</p>
+                                    <p className="text-clip break-all">{bioContent}</p>
                                 ) : (
                                     <p className="italic text-guilded-subtitle break-all">
                                         No content yet, but we&apos;re sure they&apos;re an amazing person!

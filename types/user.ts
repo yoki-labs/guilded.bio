@@ -49,11 +49,11 @@ export interface BadgeInfo {
     color: string;
 }
 
-const partnerBadge: BadgeInfo = { iconUrl: "/partner-badge.png", label: "", color: "blue" };
+const partnerProgram: BadgeInfo = { iconUrl: "/partner-badge.png", label: "", color: "blue" };
 const guildedStaff: BadgeInfo = { iconUrl: "/staff-badge.png", label: "Staff", color: "" };
 
 export const badgeMap = {
-    PartnerBadge: partnerBadge,
+    PartnerProgram: partnerProgram,
     GuildedStaff: guildedStaff,
 } as const;
 

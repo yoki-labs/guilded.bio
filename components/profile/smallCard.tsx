@@ -12,7 +12,7 @@ export default function SmallCard(props: { id: string; name: string; bio: string
                     </div>
                     <hr className="mb-2 mt-3 border-guilded-gray border" />
                     {props.bio ? (
-                        <p className="w-full h-full text-guilded-white text-clip break-words text-left">
+                        <p className="w-full h-full text-guilded-white text-clip break-words text-left whitespace-pre-wrap">
                             {props.bio.length > 198 ? props.bio.slice(0, 198) + "..." : props.bio}
                         </p>
                     ) : (

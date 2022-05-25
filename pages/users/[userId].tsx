@@ -81,8 +81,8 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
     // Guilded only displays 3 images max for stonks, so if a user has more than 3 this prevents from adding more than 3.
     const maxStonks = Math.min(3, user.stonks);
     const stonks = [...Array(maxStonks)].map((_, i) => (
-        <div key={i} className={`first:z-20 even:z-10 last:z-0 even:-ml-[12px] ${maxStonks !== 1 ? "last:-ml-[12px]" : ""}`}>
-            <Image src="/stonks.png" height="16" width="16" />
+        <div key={i} className={`first:z-20 even:z-10 last:z-0 even:-ml-[14px] ${maxStonks !== 1 ? "last:-ml-[14px]" : ""}`}>
+            <Image src="/stonks.png" height="20" width="20" />
         </div>
     ));
 

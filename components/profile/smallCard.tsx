@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default function SmallCard(props: { id: string; name: string; bio: string; badges: string[]; iconURL: string }) {
+export default function SmallCard(props: { id: string; name: string; bio: string | null; badges: string[]; iconURL: string }) {
     return (
         <Link href={`/u/${props.id}`}>
             <a>
@@ -11,9 +11,13 @@ export default function SmallCard(props: { id: string; name: string; bio: string
                         <h1 className="my-auto ml-4 text-2xl md:text-3xl font-semibold">{props.name}</h1>
                     </div>
                     <hr className="mb-2 mt-3 border-guilded-gray border" />
-                    <p className="w-full h-full text-guilded-white text-clip break-words text-left">
-                        {props.bio.length > 198 ? props.bio.slice(0, 198) + "..." : props.bio}
-                    </p>
+                    {props.bio ? (
+                        <p className="w-full h-full text-guilded-white text-clip break-words text-left">
+                            {props.bio.length > 198 ? props.bio.slice(0, 198) + "..." : props.bio}
+                        </p>
+                    ) : (
+                        <p className="italic text-guilded-subtitle">No content yet, but we&apos;re sure they&apos;re an amazing person!</p>
+                    )}
                 </div>
             </a>
         </Link>

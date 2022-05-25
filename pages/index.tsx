@@ -54,7 +54,7 @@ const Home: NextPage<Props> = ({ users }: Props) => {
                             name={user.name}
                             iconURL={user.profilePictureLg}
                             badges={[]}
-                            bio={user.defaultBio?.content ?? "No content yet, but we're sure they're a great person!"}
+                            bio={user.defaultBio?.content ?? null}
                         />
                     ))}
                 </div>

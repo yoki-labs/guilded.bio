@@ -8,9 +8,10 @@ import { ModifiedSession } from "../../types/session";
 import NameBadge from "../../components/profile/nameBadge";
 import { fetchUser } from "../../lib/api";
 import prisma from "../../lib/prisma";
-import { BadgeInfo, GuildedUser, BadgeName, badgeMap } from "../../types/user";
+import { GuildedUser, BadgeName, badgeMap } from "../../types/user";
 import { MouseEventHandler, useState } from "react";
 import Button from "../../components/button";
+import { DeNullishFilter } from "../../utility/utils";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const { userId } = ctx.params as { userId: string };
@@ -75,9 +76,17 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
     }
 
     const isCurrentUser = session && user.id === (session.user as ModifiedSession).id;
-    const badges: BadgeInfo[] = user.badges.map((b) => badgeMap[b as BadgeName]).filter((b): b is Exclude<BadgeInfo, null | undefined | "" | 0> => !!b);
+    const badges = user.badges.map((b) => badgeMap[b as BadgeName]).filter(DeNullishFilter);
 
-	return (
+    // Guilded only displays 3 images max for stonks, so if a user has more than 3 this prevents from adding more than 3.
+    const maxStonks = Math.min(3, user.stonks);
+    const stonks = [...Array(maxStonks)].map((_, i) => (
+        <div key={i} className={`first:z-20 even:z-10 last:z-0 even:-ml-[12px] ${maxStonks !== 1 ? "last:-ml-[12px]" : ""}`}>
+            <Image src="/stonks.png" height="16" width="16" />
+        </div>
+    ));
+
+    return (
         <>
             <Head>
                 <title>Guilded.bio - {user.name}</title>
@@ -89,16 +98,16 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                             <Image src={user.profilePicture} alt={`${user.name}'s avatar`} className="rounded-full shadow-md" height="120" width="120" />
                             <div className="flex flex-col pl-6 my-auto">
                                 <div className="flex">
-                                    <h1 className="pr-3 text-2xl md:text-3xl font-bold">{user.name}</h1>
+                                    <h1 className="pr-2 text-2xl md:text-3xl font-bold">{user.name}</h1>
                                     {isCurrentUser && <NameBadge text="You" color="blue" />}
                                     {badges.map((b) => (
                                         <NameBadge key={b.iconUrl} iconURL={b.iconUrl} text={b.label} color={b.color} />
                                     ))}
                                 </div>
-                                <div></div>
+                                <div className="flex">{stonks}</div>
                             </div>
                         </div>
-                        <hr className="border border-guilded-gray mt-4 mb-2" />
+                        <hr className="border border-guilded-gray mt-4 mb-4" />
                         {isInEditingMode ? (
                             <form onSubmit={handleSubmit}>
                                 <div className="text-white flex flex-wrap">
@@ -107,10 +116,10 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                         defaultValue={bio?.content ? bioContent : ""}
                                         maxLength={250}
                                         onChange={(data) => setNewBioContent(data.target.value)}
-                                        className="w-full px-3 pt-3 pb-40 rounded-lg bg-guilded-gray resize-none overflow-hidden"
+                                        className="w-full px-3 pt-3 pb-40 rounded-lg bg-guilded-gray resize-none"
                                     />
                                 </div>
-                                <div className="pt-2">
+                                <div className="pt-4">
                                     <Button>Save</Button>
                                     <button
                                         form=""

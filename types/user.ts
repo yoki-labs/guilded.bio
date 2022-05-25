@@ -14,6 +14,8 @@ export interface GuildedUser {
     profileBannerSm: string;
     aboutInfo: AboutInfo;
     badges: BadgeName[];
+    flairInfos: FlairInfo[];
+    stonks: number;
     createdAt: string;
 }
 
@@ -35,6 +37,11 @@ export interface Alias {
 }
 
 export type UserWithBio = User & { defaultBio: Bio | null };
+
+export interface FlairInfo {
+    flair: "guilded_gold_v1" | "gil_gang";
+    amount: number;
+}
 
 export interface BadgeInfo {
     iconUrl: string;

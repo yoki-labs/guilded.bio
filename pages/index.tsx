@@ -3,9 +3,8 @@ import Head from "next/head";
 
 import Button from "../components/button";
 import Link from "next/link";
-import SmallCard from "../components/profile/smallCard";
+import { Card } from "../components/profile/card";
 import prisma from "../lib/prisma";
-import { Bio, User } from "@prisma/client";
 import { fetchUser } from "../lib/api";
 import { GuildedUser, UserWithBio } from "../types/user";
 
@@ -48,7 +47,7 @@ const Home: NextPage<Props> = ({ users }: Props) => {
             <div className="bg-guilded-gray text-guilded-white w-full flex min-h-screen">
                 <div className="mx-auto text-center py-5 px-16 inline-grid gap-4 md:grid-cols-3">
                     {users.map((user) => (
-                        <SmallCard
+                        <Card
                             key={user.id}
                             id={user.userId}
                             name={user.name}

@@ -86,6 +86,15 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
         </div>
     ));
 
+    const maxGold = Math.min(5, user.flairInfos?.find((f) => f.flair === "guilded_gold_v1")?.amount ?? 0);
+    const gold = [...Array(maxGold)].map((_, i) => (
+        <div key={i} className={i === 0 ? "" : "-ml-[14px]"}>
+            <Image src="/guilded-gold.png" height="20" width="20" />
+        </div>
+    ));
+
+    const isGilGang = user.flairInfos?.find((f) => f.flair === "gil_gang");
+
     return (
         <>
             <Head>
@@ -104,7 +113,11 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                         <NameBadge key={b.iconUrl} iconURL={b.iconUrl} text={b.label} color={b.color} />
                                     ))}
                                 </div>
-                                <div className="flex">{stonks}</div>
+                                <div id="flairs" className="flex gap-2 vertical-align">
+                                    <div className="flex">{stonks}</div>
+                                    <div className="flex">{gold}</div>
+                                    {isGilGang && <Image src="/gilgang.png" alt="gil gang" height="10" width="30" />}
+                                </div>
                             </div>
                         </div>
                         <hr className="border border-guilded-gray mt-4 mb-4" />
@@ -127,7 +140,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                         className="ml-3 font-bold text-guilded-subtitle hover:text-guilded-white transition-colors"
                                         onClick={() => {
                                             setIsInEditingMode(false);
-                                            setNewBioContent(bioContent ?? '');
+                                            setNewBioContent(bioContent ?? "");
                                         }}
                                     >
                                         Cancel

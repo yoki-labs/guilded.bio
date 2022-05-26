@@ -45,7 +45,7 @@ const Home: NextPage<Props> = ({ users }: Props) => {
                 </div>
             </div>
             <div className="bg-guilded-gray text-guilded-white w-full flex min-h-screen">
-                <div className="mx-auto text-center py-5 px-16 inline-grid gap-4 md:grid-cols-3">
+                <div className="mx-auto py-5 px-16 grid gap-4 md:grid-cols-3 auto-cols-min auto-rows-min">
                     {users.map((user) => (
                         <Card
                             key={user.id}

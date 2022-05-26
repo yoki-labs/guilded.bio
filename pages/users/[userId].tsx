@@ -116,7 +116,12 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                 <div id="flairs" className="flex gap-2 vertical-align">
                                     <div className="flex">{stonks}</div>
                                     <div className="flex">{gold}</div>
-                                    {isGilGang && <Image src="/gilgang.png" alt="gil gang" height="10" width="30" />}
+                                    <div className="flex">
+										{isGilGang && <img src="/gilgang.png" alt="gil gang"style={{
+											height: "20px",
+											width: "25px"
+										}} />}
+									</div>
                                 </div>
                             </div>
                         </div>

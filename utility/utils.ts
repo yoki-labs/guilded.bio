@@ -1,0 +1,1 @@
+export const DeNullishFilter = <T>(b: T): b is Exclude<T, null|undefined|0|''> => !!b; 

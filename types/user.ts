@@ -13,7 +13,9 @@ export interface GuildedUser {
     profileBannerLg: string;
     profileBannerSm: string;
     aboutInfo: AboutInfo;
-    badges: string[];
+    badges: BadgeName[];
+    flairInfos: FlairInfo[];
+    stonks: number;
     createdAt: string;
 }
 
@@ -35,3 +37,24 @@ export interface Alias {
 }
 
 export type UserWithBio = User & { defaultBio: Bio | null };
+
+export interface FlairInfo {
+    flair: "guilded_gold_v1" | "gil_gang";
+    amount: number;
+}
+
+export interface BadgeInfo {
+    iconUrl: string;
+    label: string;
+    color: string;
+}
+
+const partnerProgram: BadgeInfo = { iconUrl: "/partner-badge.png", label: "", color: "blue" };
+const guildedStaff: BadgeInfo = { iconUrl: "/staff-badge.png", label: "Staff", color: "" };
+
+export const badgeMap = {
+    PartnerProgram: partnerProgram,
+    GuildedStaff: guildedStaff,
+} as const;
+
+export type BadgeName = keyof typeof badgeMap;

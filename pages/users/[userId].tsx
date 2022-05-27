@@ -8,9 +8,11 @@ import { ModifiedSession } from "../../types/session";
 import NameBadge from "../../components/profile/nameBadge";
 import { fetchUser } from "../../lib/api";
 import prisma from "../../lib/prisma";
-import { GuildedUser } from "../../types/user";
+import { GuildedUser, BadgeName, badgeMap } from "../../types/user";
 import { MouseEventHandler, useState } from "react";
 import Button from "../../components/button";
+import { DeNullishFilter } from "../../utility/utils";
+import { UserFlairs } from "../../components/profile/flairs";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const { userId } = ctx.params as { userId: string };
@@ -36,8 +38,8 @@ function ToolbarButton(props: { icon: string; onClick: MouseEventHandler }) {
 const UserPage: NextPage<Props> = ({ user, bio }) => {
     const { data: session } = useSession();
     const [isInEditingMode, setIsInEditingMode] = useState(false);
-    const [newBioContent, setNewBioContent] = useState("");
     const [bioContent, setBioContent] = useState(bio?.content);
+    const [newBioContent, setNewBioContent] = useState(bioContent);
     const handleSubmit = async (event: any) => {
         // Stop the form from submitting and refreshing the page.
         event.preventDefault();
@@ -73,8 +75,11 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
             </>
         );
     }
+
     const isCurrentUser = session && user.id === (session.user as ModifiedSession).id;
-    const badges: string[] = user.badges;
+    const badges = user.badges.map((b) => badgeMap[b as BadgeName]).filter(DeNullishFilter);
+	const newBioLength = newBioContent?.length ?? 0;
+
     return (
         <>
             <Head>
@@ -84,13 +89,19 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                 <div className="mx-auto max-w-2xl py-8 px-4">
                     <div className="bg-guilded-slate rounded-xl p-5 sm:px-8 shadow">
                         <div className="flex">
-                            <Image src={user.profilePicture} alt={`${user.name}'s avatar`} className="rounded-full" height="120" width="120" />
-                            <div className="my-auto flex">
-                                <h1 className="pl-6 pr-3 text-2xl md:text-3xl font-bold">{user.name}</h1>
-                                {isCurrentUser && <NameBadge text="You" color="blue" />}
+                            <Image src={user.profilePicture} alt={`${user.name}'s avatar`} className="rounded-full shadow-md" height="120" width="120" />
+                            <div className="flex flex-col pl-6 my-auto">
+                                <div className="flex">
+                                    <h1 className="pr-2 text-2xl md:text-3xl font-bold">{user.name}</h1>
+                                    {isCurrentUser && <NameBadge text="You" color="blue" />}
+                                    {badges.map((b) => (
+                                        <NameBadge key={b.iconUrl} iconURL={b.iconUrl} text={b.label} color={b.color} />
+                                    ))}
+                                </div>
+                                <UserFlairs user={user} />
                             </div>
                         </div>
-                        <hr className="border border-guilded-gray mt-4 mb-2" />
+                        <hr className="border border-guilded-gray mt-4 mb-4" />
                         {isInEditingMode ? (
                             <form onSubmit={handleSubmit}>
                                 <div className="text-white flex flex-wrap">
@@ -99,16 +110,27 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                         defaultValue={bio?.content ? bioContent : ""}
                                         maxLength={250}
                                         onChange={(data) => setNewBioContent(data.target.value)}
-                                        className="w-full px-3 pt-3 pb-40 rounded-lg bg-guilded-gray resize-none overflow-hidden"
+                                        className="w-full px-3 pt-3 pb-40 rounded-lg bg-guilded-gray resize-none"
                                     />
+									<p className={`ml-auto ${newBioLength === 250 ? "font-bold" : ""} ${
+                                        newBioLength >= 200
+                                        ? "text-red-400/70"
+                                        : newBioLength >= 100
+                                            ? "text-guilded-gilded/70"
+                                            : "text-guilded-white/70"
+                                        }`}
+                                    >
+                                        {newBioContent?.length ? newBioContent.length : bioContent?.length}/250
+                                    </p>
                                 </div>
-                                <div className="pt-2">
+                                <div className="pt-4">
                                     <Button>Save</Button>
                                     <button
                                         form=""
                                         className="ml-3 font-bold text-guilded-subtitle hover:text-guilded-white transition-colors"
                                         onClick={() => {
                                             setIsInEditingMode(false);
+                                            setNewBioContent(bioContent ?? "");
                                         }}
                                     >
                                         Cancel
@@ -117,13 +139,15 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                             </form>
                         ) : (
                             <div className="flex">
-                                {bio?.content ? (
-                                    <p className="text-clip break-all">{bioContent}</p>
-                                ) : (
-                                    <p className="italic text-guilded-subtitle break-all">
-                                        No content yet, but we&apos;re sure they&apos;re an amazing person!
-                                    </p>
-                                )}
+                                <div className="flex w-full max-h-48 overflow-y-auto overflow-x-hidden">
+                                    {bio?.content ? (
+                                        <p className="text-clip break-all whitespace-pre-wrap">{bioContent}</p>
+                                    ) : (
+                                        <p className="italic text-guilded-subtitle break-all">
+                                            No content yet, but we&apos;re sure they&apos;re an amazing person!
+                                        </p>
+                                    )}
+                                </div>
                                 {isCurrentUser && (
                                     <div className="ml-auto text-xl pl-4">
                                         <ToolbarButton

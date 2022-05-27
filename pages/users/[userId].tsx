@@ -12,6 +12,7 @@ import { GuildedUser, BadgeName, badgeMap } from "../../types/user";
 import { MouseEventHandler, useState } from "react";
 import Button from "../../components/button";
 import { DeNullishFilter } from "../../utility/utils";
+import { UserFlairs } from "../../components/profile/flairs";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const { userId } = ctx.params as { userId: string };
@@ -78,23 +79,6 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
     const isCurrentUser = session && user.id === (session.user as ModifiedSession).id;
     const badges = user.badges.map((b) => badgeMap[b as BadgeName]).filter(DeNullishFilter);
 
-    // Guilded only displays 3 images max for stonks, so if a user has more than 3 this prevents from adding more than 3.
-    const maxStonks = Math.min(3, user.stonks);
-    const stonks = [...Array(maxStonks)].map((_, i) => (
-        <div key={i} className={`first:z-20 even:z-10 last:z-0 even:-ml-[14px] ${maxStonks !== 1 ? "last:-ml-[14px]" : ""}`}>
-            <Image src="/stonks.png" height="20" width="20" />
-        </div>
-    ));
-
-    const maxGold = Math.min(5, user.flairInfos?.find((f) => f.flair === "guilded_gold_v1")?.amount ?? 0);
-    const gold = [...Array(maxGold)].map((_, i) => (
-        <div key={i} className={i === 0 ? "" : "-ml-[14px]"}>
-            <Image src="/guilded-gold.png" height="20" width="20" />
-        </div>
-    ));
-
-    const isGilGang = user.flairInfos?.find((f) => f.flair === "gil_gang");
-
     return (
         <>
             <Head>
@@ -113,16 +97,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                         <NameBadge key={b.iconUrl} iconURL={b.iconUrl} text={b.label} color={b.color} />
                                     ))}
                                 </div>
-                                <div id="flairs" className="flex gap-2 vertical-align">
-                                    <div className="flex">{stonks}</div>
-                                    <div className="flex">{gold}</div>
-                                    <div className="flex">
-										{isGilGang && <img src="/gilgang.png" alt="gil gang"style={{
-											height: "20px",
-											width: "25px"
-										}} />}
-									</div>
-                                </div>
+                                <UserFlairs user={user} />
                             </div>
                         </div>
                         <hr className="border border-guilded-gray mt-4 mb-4" />

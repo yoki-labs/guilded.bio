@@ -18,9 +18,9 @@ export const Card = (props: { user: GuildedUser; bio: string | null }) => {
                         </div>
                     </div>
                     <hr className="mb-2 mt-4 border-guilded-gray border" />
-                    <div className="flex">
+                    <div className="flex shadow-inner">
                         {props.bio ? (
-                            <p className="w-full max-h-20 text-guilded-white break-words text-left whitespace-pre-wrap">
+                            <p className="w-full max-h-20 text-guilded-white break-words text-left whitespace-pre-wrap linear-gradient">
                                 {props.bio.length > 75 ? props.bio.slice(0, 75) + "..." : props.bio}
                             </p>
                         ) : (

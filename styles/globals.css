@@ -15,3 +15,7 @@
 body::-webkit-scrollbar {
     display: none;
 }
+
+.linear-gradient {
+	mask-image: linear-gradient(black 50%, transparent 100%);
+}

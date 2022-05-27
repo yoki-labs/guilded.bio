@@ -9,7 +9,7 @@ export const Card = (props: { user: GuildedUser; bio: string | null }) => {
     return (
         <Link href={`/u/${user.id}`}>
             <a>
-                <div className="bg-guilded-slate rounded-xl p-5 h-fit max-w-md overflow-hidden shadow-lg hover:shadow-sm hover:bg-[#24262d] transition">
+                <div className="bg-guilded-slate rounded-xl p-5 max-w-md min-h-[13rem] max-h-[13rem] overflow-hidden shadow-lg hover:shadow-sm hover:bg-[#24262d] transition">
                     <div className="flex">
                         <Image src={user.profilePictureLg} alt={`${user.name}'s avatar`} className="rounded-full my-auto shadow" height="80" width="80" />
                         <div className="flex flex-col pl-4 my-auto">

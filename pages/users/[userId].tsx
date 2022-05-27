@@ -78,6 +78,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
 
     const isCurrentUser = session && user.id === (session.user as ModifiedSession).id;
     const badges = user.badges.map((b) => badgeMap[b as BadgeName]).filter(DeNullishFilter);
+	const newBioLength = newBioContent?.length ?? 0;
 
     return (
         <>
@@ -111,10 +112,10 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                         onChange={(data) => setNewBioContent(data.target.value)}
                                         className="w-full px-3 pt-3 pb-40 rounded-lg bg-guilded-gray resize-none"
                                     />
-									<p className={`ml-auto ${(newBioContent?.length ?? 0) === 250 ? "font-bold" : ""} ${
-                                        (newBioContent?.length ?? 0) >= 200
+									<p className={`ml-auto ${newBioLength === 250 ? "font-bold" : ""} ${
+                                        newBioLength >= 200
                                         ? "text-red-400/70"
-                                        : (newBioContent?.length ?? 0) >= 100
+                                        : newBioLength >= 100
                                             ? "text-guilded-gilded/70"
                                             : "text-guilded-white/70"
                                         }`}

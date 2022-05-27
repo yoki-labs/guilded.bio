@@ -30,7 +30,7 @@ const Home: NextPage<Props> = ({ users }: Props) => {
                 <title>Guilded.bio - Home</title>
             </Head>
 
-            <div className="w-full py-32 px-8 text-center bg-guilded-gilded">
+            <div className="w-full py-8 md:py-32 px-8 text-center bg-guilded-gilded">
                 <div className="m-auto">
                     <h1 className="text-black text-6xl font-bold">Tell the world about yourself</h1>
                     <div className="py-6">
@@ -45,16 +45,9 @@ const Home: NextPage<Props> = ({ users }: Props) => {
                 </div>
             </div>
             <div className="bg-guilded-gray text-guilded-white w-full flex min-h-screen">
-                <div className="mx-auto py-5 px-16 grid gap-4 md:grid-cols-3 auto-cols-min auto-rows-min">
+                <div className="mx-auto py-5 px-8 md:px-16 grid gap-4 md:grid-cols-3 md:auto-cols-min auto-rows-min">
                     {users.map((user) => (
-                        <Card
-                            key={user.id}
-                            id={user.userId}
-                            name={user.name}
-                            iconURL={user.profilePictureLg}
-                            badges={[]}
-                            bio={user.defaultBio?.content ?? null}
-                        />
+                        <Card key={user.id} user={user} bio={user.defaultBio?.content ?? null} />
                     ))}
                 </div>
             </div>

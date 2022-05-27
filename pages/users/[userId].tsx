@@ -12,6 +12,7 @@ import { GuildedUser, BadgeName, badgeMap } from "../../types/user";
 import { MouseEventHandler, useState } from "react";
 import Button from "../../components/button";
 import { DeNullishFilter } from "../../utility/utils";
+import { UserFlairs } from "../../components/profile/flairs";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const { userId } = ctx.params as { userId: string };
@@ -37,8 +38,8 @@ function ToolbarButton(props: { icon: string; onClick: MouseEventHandler }) {
 const UserPage: NextPage<Props> = ({ user, bio }) => {
     const { data: session } = useSession();
     const [isInEditingMode, setIsInEditingMode] = useState(false);
-    const [newBioContent, setNewBioContent] = useState("");
     const [bioContent, setBioContent] = useState(bio?.content);
+    const [newBioContent, setNewBioContent] = useState(bioContent);
     const handleSubmit = async (event: any) => {
         // Stop the form from submitting and refreshing the page.
         event.preventDefault();
@@ -78,14 +79,6 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
     const isCurrentUser = session && user.id === (session.user as ModifiedSession).id;
     const badges = user.badges.map((b) => badgeMap[b as BadgeName]).filter(DeNullishFilter);
 
-    // Guilded only displays 3 images max for stonks, so if a user has more than 3 this prevents from adding more than 3.
-    const maxStonks = Math.min(3, user.stonks);
-    const stonks = [...Array(maxStonks)].map((_, i) => (
-        <div key={i} className={`first:z-20 even:z-10 last:z-0 even:-ml-[14px] ${maxStonks !== 1 ? "last:-ml-[14px]" : ""}`}>
-            <Image src="/stonks.png" height="20" width="20" />
-        </div>
-    ));
-
     return (
         <>
             <Head>
@@ -104,7 +97,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                         <NameBadge key={b.iconUrl} iconURL={b.iconUrl} text={b.label} color={b.color} />
                                     ))}
                                 </div>
-                                <div className="flex">{stonks}</div>
+                                <UserFlairs user={user} />
                             </div>
                         </div>
                         <hr className="border border-guilded-gray mt-4 mb-4" />
@@ -136,6 +129,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                         className="ml-3 font-bold text-guilded-subtitle hover:text-guilded-white transition-colors"
                                         onClick={() => {
                                             setIsInEditingMode(false);
+                                            setNewBioContent(bioContent ?? "");
                                         }}
                                     >
                                         Cancel
@@ -144,13 +138,15 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                             </form>
                         ) : (
                             <div className="flex">
-                                {bio?.content ? (
-                                    <p className="text-clip break-all whitespace-pre-wrap">{bioContent}</p>
-                                ) : (
-                                    <p className="italic text-guilded-subtitle break-all">
-                                        No content yet, but we&apos;re sure they&apos;re an amazing person!
-                                    </p>
-                                )}
+                                <div className="flex w-full max-h-48 overflow-y-auto overflow-x-hidden">
+                                    {bio?.content ? (
+                                        <p className="text-clip break-all whitespace-pre-wrap">{bioContent}</p>
+                                    ) : (
+                                        <p className="italic text-guilded-subtitle break-all">
+                                            No content yet, but we&apos;re sure they&apos;re an amazing person!
+                                        </p>
+                                    )}
+                                </div>
                                 {isCurrentUser && (
                                     <div className="ml-auto text-xl pl-4">
                                         <ToolbarButton

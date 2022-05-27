@@ -14,6 +14,7 @@ export const Stonks = (numStonks: number) => {
 };
 
 export const Gold = (numGold: number) => {
+	// OG Gold has max of 5 images, so minmax.
     const maxGold = Math.min(5, numGold);
     const gold = [...Array(maxGold)].map((_, i) => (
         <div key={i} className={i === 0 ? "" : "-ml-[14px]"}>

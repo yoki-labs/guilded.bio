@@ -9,7 +9,7 @@ export const Card = (props: { user: GuildedUser; bio: string | null }) => {
     return (
         <Link href={`/u/${user.id}`}>
             <a>
-                <div className="bg-guilded-slate rounded-xl p-5 max-w-md min-h-[13rem] max-h-[13rem] overflow-hidden shadow-lg hover:shadow-sm hover:bg-[#24262d] transition">
+                <div className="bg-guilded-slate rounded-xl p-5 max-w-md min-h-[15rem] max-h-[15rem] overflow-hidden shadow-lg hover:shadow-sm hover:bg-[#24262d] transition">
                     <div className="flex">
                         <Image src={user.profilePictureLg} alt={`${user.name}'s avatar`} className="rounded-full my-auto shadow" height="80" width="80" />
                         <div className="flex flex-col pl-4 my-auto">
@@ -21,7 +21,7 @@ export const Card = (props: { user: GuildedUser; bio: string | null }) => {
                     <div className="flex shadow-inner">
                         {props.bio ? (
                             <p className="w-full max-h-20 text-guilded-white break-words text-left whitespace-pre-wrap linear-gradient">
-                                {props.bio.length > 75 ? props.bio.slice(0, 75) + "..." : props.bio}
+                                {props.bio.length > 150 ? props.bio.slice(0, 150) + "..." : props.bio}
                             </p>
                         ) : (
                             <p className="italic text-guilded-subtitle">No content yet, but we&apos;re sure they&apos;re an amazing person!</p>

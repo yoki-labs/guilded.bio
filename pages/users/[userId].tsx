@@ -88,17 +88,18 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                 <meta property="og:title" content="guilded.bio" />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content={`https://guilded.bio/u/${user.id}`} />
-                <meta property="og:image" content={user.profileBannerLg} />
+                <meta property="og:thumbnail" content={user.profilePictureLg} />
                 <meta
                     property="og:description"
                     content={`
-						**Name:** ${user.name}
-						**Account Age:** ${new Date(user.createdAt).toLocaleDateString("en-US")}
-						**Bio:** ${bio?.content ? (bio.content.length > 50 ? bio.content.slice(0, 50) + "..." : bio.content) : "No bio yet, but we're sure they're an amazing person!"}
-						**Badges:** ${user.badges.join(", ")}
-					`.replace(/\s/g, "")}
+						Name: ${user.name}
+						Account Age: ${new Date(user.createdAt).toLocaleDateString("en-US")}
+						Bio: ${bio?.content ? (bio.content.length > 50 ? bio.content.slice(0, 50) + "..." : bio.content) : "No bio yet, but we're sure they're an amazing person!"}
+						${user.badges && `Badges: ${user.badges.join(", ")}`}
+					`}
                 />
                 <meta name="theme-color" content="#F5C400" />
+                <meta property="twitter:image" content="summary_large_image" />
             </Head>
             <div className="bg-guilded-gray text-guilded-white w-full min-h-screen">
                 <div className="mx-auto max-w-2xl py-8 px-4">

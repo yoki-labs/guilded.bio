@@ -95,7 +95,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
 						Name: ${user.name}
 						Account Age: ${new Date(user.createdAt).toLocaleDateString("en-US")}
 						Bio: ${bio?.content ? (bio.content.length > 50 ? bio.content.slice(0, 50) + "..." : bio.content) : "No bio yet, but we're sure they're an amazing person!"}
-						${user.badges && `Badges: ${user.badges.join(", ")}`}
+						${user.badges?.length && `Badges: ${user.badges.join(", ")}`}
 					`}
                 />
                 <meta name="theme-color" content="#F5C400" />

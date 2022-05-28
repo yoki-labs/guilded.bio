@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import Guilded from "next-auth-guilded";
+import prisma from "../../../lib/prisma";
 import { ModifiedSession } from "../../../types/session";
 
 export default NextAuth({
@@ -16,6 +17,18 @@ export default NextAuth({
             // this is a glue fix that takes the ID from the token payload (under .sub) and assigns it to the session object
             session?.user && ((session.user as ModifiedSession).id = token.sub);
             return session;
+        },
+        async signIn({ profile }) {
+            if (!profile.email || !profile.sub) return false;
+            const existingUser = await prisma.user.findFirst({ where: { email: profile.email } });
+            if (!existingUser)
+                await prisma.user.create({
+                    data: {
+                        email: profile.email,
+                        userId: profile.sub,
+                    },
+                });
+            return true;
         },
     },
 });

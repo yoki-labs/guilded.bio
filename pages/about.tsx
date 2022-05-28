@@ -6,6 +6,7 @@ const About: NextPage = () => {
         <>
             <Head>
                 <title>Guilded.bio - About</title>
+                <meta name="description" content="Learn more about us and why guilded.bio was born!" />
             </Head>
             <div className="w-full py-32 px-8 text-center bg-guilded-gilded">
                 <div className="m-auto">

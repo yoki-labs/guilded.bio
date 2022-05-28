@@ -28,6 +28,7 @@ const Home: NextPage<Props> = ({ users }: Props) => {
         <>
             <Head>
                 <title>Guilded.bio - Home</title>
+                <meta name="description" content="Express yourself on Guilded with a simple link. Explore and find users just like you!" />
             </Head>
 
             <div className="w-full py-8 md:py-32 px-8 text-center bg-guilded-gilded">

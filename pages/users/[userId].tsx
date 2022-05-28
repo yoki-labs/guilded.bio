@@ -78,12 +78,27 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
 
     const isCurrentUser = session && user.id === (session.user as ModifiedSession).id;
     const badges = user.badges.map((b) => badgeMap[b as BadgeName]).filter(DeNullishFilter);
-	const newBioLength = newBioContent?.length ?? 0;
+    const newBioLength = newBioContent?.length ?? 0;
 
     return (
         <>
             <Head>
                 <title>Guilded.bio - {user.name}</title>
+                <meta name="description" content={`Learn more about Guilded user ${user.name}!`} />
+                <meta property="og:title" content="guilded.bio" />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content={`https://guilded.bio/u/${user.id}`} />
+                <meta property="og:image" content={user.profileBannerLg} />
+                <meta
+                    property="og:description"
+                    content={`
+						**Name:** ${user.name}
+						**Account Age:** ${new Date(user.createdAt).toLocaleDateString("en-US")}
+						**Bio:** ${bio?.content ? (bio.content.length > 50 ? bio.content.slice(0, 50) + "..." : bio.content) : "No bio yet, but we're sure they're an amazing person!"}
+						**Badges:** ${user.badges.join(", ")}
+					`.replace(/\s/g, "")}
+                />
+                <meta name="theme-color" content="#F5C400" />
             </Head>
             <div className="bg-guilded-gray text-guilded-white w-full min-h-screen">
                 <div className="mx-auto max-w-2xl py-8 px-4">
@@ -112,12 +127,9 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                         onChange={(data) => setNewBioContent(data.target.value)}
                                         className="w-full px-3 pt-3 pb-40 rounded-lg bg-guilded-gray resize-none"
                                     />
-									<p className={`ml-auto ${newBioLength === 250 ? "font-bold" : ""} ${
-                                        newBioLength >= 200
-                                        ? "text-red-400/70"
-                                        : newBioLength >= 100
-                                            ? "text-guilded-gilded/70"
-                                            : "text-guilded-white/70"
+                                    <p
+                                        className={`ml-auto ${newBioLength === 250 ? "font-bold" : ""} ${
+                                            newBioLength >= 200 ? "text-red-400/70" : newBioLength >= 100 ? "text-guilded-gilded/70" : "text-guilded-white/70"
                                         }`}
                                     >
                                         {newBioContent?.length ? newBioContent.length : bioContent?.length}/250

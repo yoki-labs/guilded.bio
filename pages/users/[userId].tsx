@@ -101,7 +101,6 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                     }`}
                 />
                 <meta name="theme-color" content="#F5C400" />
-                <meta property="twitter:image" content="summary_large_image" />
             </Head>
             <div className="bg-guilded-gray text-guilded-white w-full min-h-screen">
                 <div className="mx-auto max-w-2xl py-8 px-4">

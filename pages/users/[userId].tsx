@@ -88,7 +88,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                 <meta property="og:title" content="guilded.bio" />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content={`https://guilded.bio/u/${user.id}`} />
-                <meta property="og:thumbnail" content={user.profilePictureLg} />
+                <meta property="og:image" content={user.profilePictureLg} />
                 <meta
                     property="og:description"
                     content={`

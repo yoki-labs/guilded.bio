@@ -19,12 +19,11 @@ export default NextAuth({
             return session;
         },
         async signIn({ profile }) {
-            if (!profile.email || !profile.sub) return false;
+            if (!profile.sub) return false;
             const existingUser = await prisma.user.findFirst({ where: { email: profile.email } });
             if (!existingUser)
                 await prisma.user.create({
                     data: {
-                        email: profile.email,
                         userId: profile.sub,
                     },
                 });

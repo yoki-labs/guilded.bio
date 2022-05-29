@@ -15,15 +15,15 @@ export default NextAuth({
         async session({ session, token }) {
             // by default, next-auth does not include the user ID as part of the session object. Crazy, I know
             // this is a glue fix that takes the ID from the token payload (under .sub) and assigns it to the session object
-            session?.user && ((session.user as ModifiedSession).id = token.sub);
+            session?.user && token.sub && ((session.user as ModifiedSession).id = token.sub);
             return session;
         },
         async signIn({ user }) {
-            const existingUser = await prisma.user.findFirst({ where: { userId: user.id } });
+            const existingUser = await prisma.user.findUnique({ where: { id: user.id } });
             if (!existingUser)
                 await prisma.user.create({
                     data: {
-                        userId: user.id,
+                        id: user.id,
                     },
                 });
             return true;

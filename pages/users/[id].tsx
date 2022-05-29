@@ -15,9 +15,9 @@ import { DeNullishFilter } from "../../utility/utils";
 import { UserFlairs } from "../../components/profile/flairs";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const { userId } = ctx.params as { userId: string };
-    const storedUser = userId ? await prisma.user.findFirst({ where: { userId }, include: { defaultBio: true } }) : null;
-    const APIUser = storedUser ? await fetchUser(userId) : null;
+    const { id } = ctx.params as { id: string };
+    const storedUser = id ? await prisma.user.findFirst({ where: { id }, include: { defaultBio: true } }) : null;
+    const APIUser = storedUser ? await fetchUser(id) : null;
 
     return { props: { user: APIUser, bio: storedUser?.defaultBio ?? null } };
 };
@@ -56,10 +56,18 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
             body: JSON.stringify(bio ? { content: newBioContent } : { content: newBioContent, default: true, author: user.id }),
         });
 
-        const data = await response.json();
-        if (!response.ok) return alert(`Error!: ${data.error.message}`);
+        if (!response.ok) {
+            const data = (await response.json().catch(() => ({
+                error: {
+                    message: "Unparseable.",
+                },
+            }))) as { error: { message: string } };
+            return alert(`Error!: ${data.error.message}`);
+        }
+        const data = (await response.json()) as { bio: Bio };
         setIsInEditingMode(false);
-        setBioContent(newBioContent);
+        setBioContent(data.bio.content);
+        console.log(bioContent);
         return true;
     };
 

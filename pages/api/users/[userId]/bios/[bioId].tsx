@@ -21,7 +21,7 @@ const BioRoute = async (req: NextApiRequest, res: NextApiResponse) => {
         if (bio.authorId !== (session.user as ModifiedSession).id) return Unauthorized(res);
         try {
             await prisma.bio.updateMany({ where: { id: bio.id }, data: { content } });
-            return Ok(res, { bio });
+            return Ok(res, { bio: { ...bio, content } });
         } catch (e) {
             console.error(e);
             return InternalError(res);

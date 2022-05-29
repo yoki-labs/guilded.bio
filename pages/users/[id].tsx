@@ -206,9 +206,12 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                                         method: "DELETE",
                                                     });
 
-                                                    const data = await response.json();
-                                                    if (!response.ok) return alert(`Error: ${data.error.message}`);
-                                                    setBioContent("");
+                                                    if (!response.ok) {
+                                                        const data = await response.json();
+                                                        return alert(`Error: ${data.error.message}`);
+                                                    }
+                                                    // Not ideal
+                                                    router.reload();
                                                 }}
                                             />
                                         )}

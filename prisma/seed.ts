@@ -24,11 +24,11 @@ async function main() {
     const panku = await prisma.user.findFirst({ where: { email: "panku@guilded.bio" } });
     const pankuDefaultBio = await prisma.bio.create({
         data: {
-            authorId: panku!.id,
+            authorId: panku!.userId,
             content: "This is a default bio!",
         },
     });
-    await prisma.user.update({ where: { id: panku!.id }, data: { defaultBioId: pankuDefaultBio.id } });
+    await prisma.user.update({ where: { userId: panku!.userId }, data: { defaultBioId: pankuDefaultBio.id } });
 }
 
 main()

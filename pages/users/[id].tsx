@@ -13,6 +13,7 @@ import { MouseEventHandler, useState } from "react";
 import Button from "../../components/button";
 import { DeNullishFilter } from "../../utility/utils";
 import { UserFlairs } from "../../components/profile/flairs";
+import { useRouter } from "next/router";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const { id } = ctx.params as { id: string };
@@ -40,6 +41,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
     const [isInEditingMode, setIsInEditingMode] = useState(false);
     const [bioContent, setBioContent] = useState(bio?.content);
     const [newBioContent, setNewBioContent] = useState(bioContent);
+    const router = useRouter();
     const handleSubmit = async (event: any) => {
         // Stop the form from submitting and refreshing the page.
         event.preventDefault();
@@ -65,9 +67,11 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
             return alert(`Error!: ${data.error.message}`);
         }
         const data = (await response.json()) as { bio: Bio };
-        setIsInEditingMode(false);
-        setBioContent(data.bio.content);
-        console.log(bioContent);
+        if (!bio) router.reload();
+        else {
+            setIsInEditingMode(false);
+            setBioContent(data.bio.content);
+        }
         return true;
     };
 

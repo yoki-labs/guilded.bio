@@ -134,7 +134,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                             newBioLength >= 200 ? "text-red-400/70" : newBioLength >= 100 ? "text-guilded-gilded/70" : "text-guilded-white/70"
                                         }`}
                                     >
-                                        {newBioContent == null ? 0 : newBioContent.length}/250
+                                        {newBioContent === null ? 0 : newBioContent.length}/250
                                     </p>
                                 </div>
                                 <div className="pt-4">

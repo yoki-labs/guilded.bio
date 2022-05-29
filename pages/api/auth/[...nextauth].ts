@@ -19,7 +19,7 @@ export default NextAuth({
             return session;
         },
         async signIn({ user }) {
-            const existingUser = await prisma.user.findFirst({ where: { email: user.email } });
+            const existingUser = await prisma.user.findFirst({ where: { userId: user.id } });
             if (!existingUser)
                 await prisma.user.create({
                     data: {

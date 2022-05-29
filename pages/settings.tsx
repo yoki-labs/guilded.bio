@@ -22,14 +22,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
     }
 
-    const storedUser = user.id ? await prisma.user.findFirst({ where: { userId: user.id }, include: { defaultBio: true } }) : null;
+    const storedUser = user.id ? await prisma.user.findFirst({ where: { id: user.id }, include: { defaultBio: true } }) : null;
     const APIUser = storedUser ? await fetchUser(user.id) : null;
     return { props: { user: APIUser } };
 };
 
 type Props = {
     user: GuildedUser;
-}
+};
 
 const SettingsPage: NextPage<Props> = ({ user }) => {
     const badges = (user.badges ?? []).map((b) => badgeMap[b as BadgeName]).filter(DeNullishFilter);

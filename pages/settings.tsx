@@ -63,6 +63,8 @@ const SettingsPage: NextPage<Props> = ({ user }) => {
                     <p>todo</p>
                     <h1 className="font-bold text-2xl mt-2">Destructive</h1>
                     <Button
+                        color="red"
+                        bold="true"
                         onClick={async () => {
                             const confirmed = confirm("Are you sure you want to delete all of your data on guilded.bio? This cannot be undone!");
                             if (!confirmed) return;
@@ -71,8 +73,10 @@ const SettingsPage: NextPage<Props> = ({ user }) => {
                                 method: "DELETE",
                             });
 
-                            const data = await response.json();
-                            if (!response.ok) return alert(`Error: ${data.error.message}`);
+                            if (!response.ok) {
+                                const data = await response.json();
+                                return alert(`Error: ${data.error.message}`);
+                            }
                             signOut();
                         }}
                     >

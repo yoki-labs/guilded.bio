@@ -14,6 +14,7 @@ import Button from "../../components/button";
 import { DeNullishFilter } from "../../utility/utils";
 import { UserFlairs } from "../../components/profile/flairs";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const { id } = ctx.params as { id: string };
@@ -121,7 +122,16 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                 <div className="mx-auto max-w-2xl py-8 px-4">
                     <div className="bg-guilded-slate rounded-xl p-5 sm:px-8 shadow">
                         <div className="flex">
-                            <Image src={user.profilePicture} alt={`${user.name}'s avatar`} className="rounded-full shadow-md" height="120" width="120" />
+                            <div className="flex">
+                                <Image src={user.profilePicture} alt={`${user.name}'s avatar`} className="rounded-full shadow-md" height="120" width="120" />
+                                {isCurrentUser && (
+                                    <Link href="/settings">
+                                        <a className="z-10 mt-auto">
+                                            <i className="ci-settings rounded-full p-1 text-xl -ml-7 bg-guilded-slate text-guilded-subtitle hover:text-guilded-white transition-colors" />
+                                        </a>
+                                    </Link>
+                                )}
+                            </div>
                             <div className="flex flex-col pl-6 my-auto">
                                 <div className="flex">
                                     <h1 className="pr-2 text-2xl md:text-3xl font-bold">{user.name}</h1>

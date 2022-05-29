@@ -15,9 +15,9 @@ import { DeNullishFilter } from "../../utility/utils";
 import { UserFlairs } from "../../components/profile/flairs";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const { userId } = ctx.params as { userId: string };
-    const storedUser = userId ? await prisma.user.findFirst({ where: { userId }, include: { defaultBio: true } }) : null;
-    const APIUser = storedUser ? await fetchUser(userId) : null;
+    const { id } = ctx.params as { id: string };
+    const storedUser = id ? await prisma.user.findFirst({ where: { id }, include: { defaultBio: true } }) : null;
+    const APIUser = storedUser ? await fetchUser(id) : null;
 
     return { props: { user: APIUser, bio: storedUser?.defaultBio ?? null } };
 };

@@ -20,7 +20,7 @@ const CreateDefaultBioRoute = async (req: NextApiRequest, res: NextApiResponse) 
                     authorId: authorId,
                 },
             });
-            await prisma.user.update({ where: { userId: authorId }, data: { defaultBioId: bio.id } });
+            await prisma.user.update({ where: { id: authorId }, data: { defaultBioId: bio.id } });
             return Ok(res, { bio });
         } catch (e) {
             console.error(e);

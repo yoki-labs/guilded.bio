@@ -19,11 +19,11 @@ export default NextAuth({
             return session;
         },
         async signIn({ user }) {
-            const existingUser = await prisma.user.findFirst({ where: { userId: user.id } });
+            const existingUser = await prisma.user.findUnique({ where: { id: user.id } });
             if (!existingUser)
                 await prisma.user.create({
                     data: {
-                        userId: user.id,
+                        id: user.id,
                     },
                 });
             return true;

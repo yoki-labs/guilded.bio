@@ -7,15 +7,15 @@ async function main() {
     const users = await prisma.user.createMany({
         data: [
             {
-                userId: "pmbOB8VA",
+                id: "pmbOB8VA",
                 email: "nico@guilded.bio",
             },
             {
-                userId: "EdVMVKR4",
+                id: "EdVMVKR4",
                 email: "shay@guilded.bio",
             },
             {
-                userId: "0mqNyllA",
+                id: "0mqNyllA",
                 email: "panku@guilded.bio",
             },
         ],
@@ -24,11 +24,11 @@ async function main() {
     const panku = await prisma.user.findFirst({ where: { email: "panku@guilded.bio" } });
     const pankuDefaultBio = await prisma.bio.create({
         data: {
-            authorId: panku!.userId,
+            authorId: panku!.id,
             content: "This is a default bio!",
         },
     });
-    await prisma.user.update({ where: { userId: panku!.userId }, data: { defaultBioId: pankuDefaultBio.id } });
+    await prisma.user.update({ where: { id: panku!.id }, data: { defaultBioId: pankuDefaultBio.id } });
 }
 
 main()

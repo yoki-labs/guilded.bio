@@ -2,7 +2,7 @@ import { Bio } from "@prisma/client";
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { ModifiedSession } from "../../types/session";
 
 import NameBadge from "../../components/profile/nameBadge";
@@ -29,10 +29,7 @@ type Props = {
 
 function ToolbarButton(props: { icon: string; onClick: MouseEventHandler }) {
     return (
-        <button
-            className="block pt-0.5 pb-0 px-1 rounded bg-guilded-gray text-guilded-subtitle hover:text-guilded-white transition-colors"
-            onClick={props.onClick}
-        >
+        <button className="block pt-0.5 pb-0 px-1 rounded bg-guilded-gray text-guilded-subtitle hover:text-guilded-white transition-colors" onClick={props.onClick}>
             <i className={`ci-${props.icon}`} />
         </button>
     );
@@ -183,7 +180,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                                     const response = await fetch(`/api/users/${user.id}/bios/${bio.id}`, {
                                                         method: "DELETE",
                                                     });
-
+                                            
                                                     const data = await response.json();
                                                     if (!response.ok) return alert(`Error: ${data.error.message}`);
                                                     setBioContent(null);

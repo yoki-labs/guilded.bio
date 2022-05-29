@@ -1,18 +1,15 @@
-import { Bio } from "@prisma/client";
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { signIn, signOut, useSession, getSession } from "next-auth/react";
+import { signOut, getSession } from "next-auth/react";
 import { ModifiedSession } from "../types/session";
 
 import NameBadge from "../components/profile/nameBadge";
 import { fetchUser } from "../lib/api";
 import prisma from "../lib/prisma";
 import { GuildedUser, BadgeName, badgeMap } from "../types/user";
-import { useState } from "react";
 import Button from "../components/button";
 import { DeNullishFilter } from "../utility/utils";
-import { UserFlairs } from "../components/profile/flairs";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const user = (await getSession({ req: context.req }))?.user as ModifiedSession | undefined;
@@ -32,7 +29,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 type Props = {
     user: GuildedUser;
-};
+}
 
 const SettingsPage: NextPage<Props> = ({ user }) => {
     const badges = (user.badges ?? []).map((b) => badgeMap[b as BadgeName]).filter(DeNullishFilter);

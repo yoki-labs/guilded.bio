@@ -77,7 +77,7 @@ const SettingsPage: NextPage<Props> = ({ user }) => {
                                 const data = await response.json();
                                 return alert(`Error: ${data.error.message}`);
                             }
-                            signOut();
+                            signOut({ callbackUrl: "/" });
                         }}
                     >
                         Delete Account

@@ -11,12 +11,12 @@ const BioRoute = async (req: NextApiRequest, res: NextApiResponse) => {
     const bioId = parseInt(req.query.bioId as string);
     if (Number.isNaN(bioId)) return BadRequest(res, "Invalid bio ID.");
 
+    const bio = await prisma.bio.findFirst({ where: { id: bioId } }).catch(() => null);
+    if (!bio) return BadRequest(res, "Bio not found.");
+
     if (req.method === "PUT") {
         const content = req.body.content as string | undefined;
         if (!content) return BadRequest(res, "You must provide content to set this bio to!");
-
-        const bio = await prisma.bio.findFirst({ where: { id: bioId } }).catch(() => null);
-        if (!bio) return BadRequest(res, "Bio not found.");
 
         if (bio.authorId !== (session.user as ModifiedSession).id) return Unauthorized(res);
         try {
@@ -27,9 +27,6 @@ const BioRoute = async (req: NextApiRequest, res: NextApiResponse) => {
             return InternalError(res);
         }
     } else if (req.method === "DELETE") {
-        const bio = await prisma.bio.findFirst({ where: { id: bioId } }).catch(() => null);
-        if (!bio) return BadRequest(res, "You do not have a bio with that ID.");
-
         if (bio.authorId !== (session.user as ModifiedSession).id) return Unauthorized(res);
 
         try {

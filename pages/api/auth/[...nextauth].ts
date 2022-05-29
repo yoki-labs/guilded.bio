@@ -18,13 +18,12 @@ export default NextAuth({
             session?.user && ((session.user as ModifiedSession).id = token.sub);
             return session;
         },
-        async signIn({ profile }) {
-            if (!profile.sub) return false;
-            const existingUser = await prisma.user.findFirst({ where: { email: profile.email } });
+        async signIn({ user }) {
+            const existingUser = await prisma.user.findFirst({ where: { email: user.email } });
             if (!existingUser)
                 await prisma.user.create({
                     data: {
-                        userId: profile.sub,
+                        userId: user.id,
                     },
                 });
             return true;

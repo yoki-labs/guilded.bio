@@ -56,10 +56,18 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
             body: JSON.stringify(bio ? { content: newBioContent } : { content: newBioContent, default: true, author: user.id }),
         });
 
-        const data = await response.json();
-        if (!response.ok) return alert(`Error!: ${data.error.message}`);
+        if (!response.ok) {
+            const data = (await response.json().catch(() => ({
+                error: {
+                    message: "Unparseable.",
+                },
+            }))) as { error: { message: string } };
+            return alert(`Error!: ${data.error.message}`);
+        }
+        const data = (await response.json()) as { bio: Bio };
         setIsInEditingMode(false);
-        setBioContent(newBioContent);
+        setBioContent(data.bio.content);
+        console.log(bioContent);
         return true;
     };
 

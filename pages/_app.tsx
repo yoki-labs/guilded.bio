@@ -12,6 +12,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
                 <meta name="keywords" content="guilded, guilded.gg, guilded.bio, guilded bio, guilded user" />
                 <meta name="author" content="Yoki Labs" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <link rel="shortcut icon" href="/favicon.ico" />
             </Head>
             <SessionProvider session={session}>
                 <Layout>

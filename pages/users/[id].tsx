@@ -110,8 +110,8 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                     property="og:description"
                     content={`${
                         bio?.content
-                            ? bio.content.length > 50
-                                ? bio.content.slice(0, 50) + "..."
+                            ? bio.content.length > 125
+                                ? bio.content.slice(0, 125) + "..."
                                 : bio.content
                             : "No bio yet, but we're sure they're an amazing person!"
                     }`}

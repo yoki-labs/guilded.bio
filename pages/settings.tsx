@@ -26,11 +26,20 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 type Props = {
-    user: GuildedUser;
+    user: GuildedUser | ModifiedSession;
 };
 
+function isGuildedUser(object: any): object is GuildedUser {
+    return 'profilePicture' in object;
+}
+
 const SettingsPage: NextPage<Props> = ({ user }) => {
-    const badges = (user.badges ?? []).map((b) => badgeMap[b as BadgeName]).filter(DeNullishFilter);
+    let profilePicture = 'https://img.guildedcdn.com/asset/DefaultUserAvatars/profile_1.png';
+    let badges: any[] = [];
+    if (isGuildedUser(user)) {
+        profilePicture = user.profilePicture ?? profilePicture;
+        badges = (user.badges ?? []).map((b) => badgeMap[b as BadgeName]).filter(DeNullishFilter);
+    }
 
     return (
         <>
@@ -46,7 +55,7 @@ const SettingsPage: NextPage<Props> = ({ user }) => {
                 <div className="mx-auto max-w-2xl py-6 px-4">
                     <div className="bg-guilded-slate rounded-xl p-5 sm:px-8 border border-white/10">
                         <div className="flex">
-                            <Image src={user.profilePicture} alt="Your avatar" className="rounded-full shadow-md" height="40" width="40" />
+                            <Image src={profilePicture} alt="Your avatar" className="rounded-full shadow-md" height="40" width="40" />
                             <div className="flex flex-col pl-3 my-auto">
                                 <div className="flex">
                                     <h1 className="pr-2 text-lg md:text-xl font-bold">{user.name}</h1>

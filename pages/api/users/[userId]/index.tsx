@@ -14,7 +14,6 @@ const DeleteUserRoute = async (req: NextApiRequest, res: NextApiResponse) => {
         const id = (session.user as ModifiedSession).id;
 
         try {
-            await prisma.bio.deleteMany({ where: { authorId: id } });
             await prisma.user.delete({ where: { id } });
             return NoContent(res);
         } catch (e) {

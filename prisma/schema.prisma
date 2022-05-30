@@ -21,7 +21,7 @@ model Bio {
     id        Int     @id @default(autoincrement())
     serverId  String? @db.VarChar(255)
     authorId  String  @db.VarChar(255)
-    author    User    @relation(fields: [authorId], references: [id], name: "BioAuthor")
+    author    User    @relation(fields: [authorId], references: [id], name: "BioAuthor", onDelete: Cascade)
     content   String  @db.Text
     defaultOf User?   @relation("DefaultBio")
 }

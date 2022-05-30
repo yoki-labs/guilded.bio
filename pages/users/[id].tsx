@@ -14,6 +14,7 @@ import Button from "../../components/button";
 import { DeNullishFilter } from "../../utility/utils";
 import { UserFlairs } from "../../components/profile/flairs";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const { id } = ctx.params as { id: string };
@@ -30,7 +31,10 @@ type Props = {
 
 function ToolbarButton(props: { icon: string; onClick: MouseEventHandler }) {
     return (
-        <button className="pt-0.5 pb-0 px-1 rounded bg-guilded-gray text-guilded-subtitle hover:text-guilded-white transition-colors" onClick={props.onClick}>
+        <button
+            className="block pt-0.5 pb-0 px-1 rounded bg-guilded-gray text-guilded-subtitle hover:text-guilded-white transition-colors"
+            onClick={props.onClick}
+        >
             <i className={`ci-${props.icon}`} />
         </button>
     );
@@ -118,7 +122,16 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                 <div className="mx-auto max-w-2xl py-8 px-4">
                     <div className="bg-guilded-slate rounded-xl p-5 sm:px-8 shadow">
                         <div className="flex">
-                            <Image src={user.profilePicture} alt={`${user.name}'s avatar`} className="rounded-full shadow-md" height="120" width="120" />
+                            <div className="flex">
+                                <Image src={user.profilePicture} alt={`${user.name}'s avatar`} className="rounded-full shadow-md" height="120" width="120" />
+                                {isCurrentUser && (
+                                    <Link href="/settings">
+                                        <a className="z-10 mt-auto">
+                                            <i className="ci-settings rounded-full p-1 text-xl -ml-7 bg-guilded-slate text-guilded-subtitle hover:text-guilded-white transition-colors" />
+                                        </a>
+                                    </Link>
+                                )}
+                            </div>
                             <div className="flex flex-col pl-6 my-auto">
                                 <div className="flex">
                                     <h1 className="pr-2 text-2xl md:text-3xl font-bold">{user.name}</h1>
@@ -130,7 +143,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                 <UserFlairs user={user} />
                             </div>
                         </div>
-                        <hr className="border border-guilded-gray mt-4 mb-4" />
+                        <hr className="border border-guilded-gray my-4" />
                         {isInEditingMode ? (
                             <form onSubmit={handleSubmit}>
                                 <div className="text-white flex flex-wrap">
@@ -175,13 +188,33 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                     )}
                                 </div>
                                 {isCurrentUser && (
-                                    <div className="ml-auto text-xl pl-4">
+                                    <div className="ml-auto text-xl pl-4 space-y-1">
                                         <ToolbarButton
                                             icon="edit"
                                             onClick={() => {
                                                 setIsInEditingMode(true);
                                             }}
                                         />
+                                        {bio && (
+                                            <ToolbarButton
+                                                icon="trash_full"
+                                                onClick={async () => {
+                                                    const confirmed = confirm("Are you sure you want to delete this bio? This cannot be undone!");
+                                                    if (!confirmed) return;
+
+                                                    const response = await fetch(`/api/users/${user.id}/bios/${bio.id}`, {
+                                                        method: "DELETE",
+                                                    });
+
+                                                    if (!response.ok) {
+                                                        const data = await response.json();
+                                                        return alert(`Error: ${data.error.message}`);
+                                                    }
+                                                    // Not ideal
+                                                    router.reload();
+                                                }}
+                                            />
+                                        )}
                                     </div>
                                 )}
                             </div>

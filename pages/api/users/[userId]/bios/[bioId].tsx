@@ -8,7 +8,7 @@ const BioRoute = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getSession({ req });
     if (!session?.user) return Unauthenticated(res);
     
-    const bioId = parseInt(req.query.bioId as string);
+    const bioId = Number(req.query.bioId);
     if (Number.isNaN(bioId)) return BadRequest(res, "Invalid bio ID.");
 
     const bio = await prisma.bio.findFirst({ where: { id: bioId } }).catch(() => null);

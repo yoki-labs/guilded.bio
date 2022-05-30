@@ -6,7 +6,6 @@ import { ModifiedSession } from "../types/session";
 
 import NameBadge from "../components/profile/nameBadge";
 import { fetchUser } from "../lib/api";
-import prisma from "../lib/prisma";
 import { GuildedUser, BadgeName, badgeMap } from "../types/user";
 import Button from "../components/button";
 import { DeNullishFilter } from "../utility/utils";
@@ -22,9 +21,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
     }
 
-    const storedUser = user.id ? await prisma.user.findFirst({ where: { id: user.id }, include: { defaultBio: true } }) : null;
-    const APIUser = storedUser ? await fetchUser(user.id) : null;
-    return { props: { user: APIUser } };
+    // We can display the user from the session even if they aren't on Guilded anymore
+    return { props: { user: (await fetchUser(user.id)) ?? user } };
 };
 
 type Props = {

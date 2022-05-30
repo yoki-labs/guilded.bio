@@ -4,7 +4,7 @@ const nextConfig = {
     redirects: async () => [
         {
             source: "/community",
-            destination: "https://www.guilded.gg/i/kjeQPrR2",
+            destination: "https://yoki.gg/support",
             permanent: true,
         },
         {

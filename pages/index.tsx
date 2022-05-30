@@ -9,7 +9,7 @@ import { fetchUser } from "../lib/api";
 import { GuildedUser, UserWithBio } from "../types/user";
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    const dbUsers = await prisma.user.findMany({ where: {}, take: 10, include: { defaultBio: true } });
+    const dbUsers = await prisma.user.findMany({ where: {}, take: 100, include: { defaultBio: true } });
     const fetchedUsers = await Promise.all(dbUsers.map((user) => fetchUser(user.id)));
     const combinedUsers = [];
     for (const [index, fetchedUser] of fetchedUsers.entries()) {

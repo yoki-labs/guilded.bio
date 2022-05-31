@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { GuildedUser } from "../../types/user";
+import { TruncateText } from "../../utility/utils";
 import { UserFlairs } from "./flairs";
 
 export const Card = (props: { user: GuildedUser; bio: string | null }) => {
@@ -21,7 +22,7 @@ export const Card = (props: { user: GuildedUser; bio: string | null }) => {
                     <div className="flex shadow-inner">
                         {props.bio ? (
                             <p className="w-full max-h-20 text-guilded-white text-left whitespace-pre-wrap overflow-wrap-anywhere linear-gradient">
-                                {props.bio.length > 150 ? props.bio.slice(0, 150) + "..." : props.bio}
+                                {TruncateText(props.bio)}
                             </p>
                         ) : (
                             <p className="italic text-guilded-subtitle">No content yet, but we&apos;re sure they&apos;re an amazing person!</p>

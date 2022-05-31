@@ -6,7 +6,7 @@ import { ModifiedSession } from "../../../../types/session";
 import { BadRequest, InternalError, NoContent, Unauthenticated } from "../../../../utility/http";
 import countries from "../../../../utility/countries"
 
-const DeleteUserRoute = async (req: NextApiRequest, res: NextApiResponse) => {
+const UserRoute = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getSession({ req });
     if (!session?.user) return Unauthenticated(res);
     const id = (session.user as ModifiedSession).id;
@@ -47,4 +47,4 @@ const DeleteUserRoute = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 };
 
-export default DeleteUserRoute;
+export default UserRoute;

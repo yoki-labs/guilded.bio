@@ -94,9 +94,9 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
 
     const handleDelete = async () => {
         const confirmed = confirm("Are you sure you want to delete this bio? This cannot be undone!");
-        if (!confirmed) return;
+        if (!confirmed || !userBio) return;
 
-        const response = await fetch(`/api/users/${user.id}/bios/${userBio?.id}`, {
+        const response = await fetch(`/api/users/${user.id}/bios/${userBio.id}`, {
             method: "DELETE",
         });
 

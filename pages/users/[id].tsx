@@ -102,7 +102,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
 
         if (!response.ok) {
             const data = await response.json();
-            return alert(`Error: ${data.error.message}`);
+            return toast.error(data.error.message);
         }
 
         setUserBio(null);

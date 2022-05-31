@@ -1,2 +1,2 @@
 export const DeNullishFilter = <T>(b: T): b is Exclude<T, null|undefined|0|''> => !!b;
-export const TruncateText = (content: string, length = 150) => content.length > length ? content.slice(0, 150) + '...' : content;
+export const TruncateText = (content: string, length = 150) => content.length > length ? content.slice(0, length) + '...' : content;

@@ -20,6 +20,10 @@ body::-webkit-scrollbar {
     mask-image: linear-gradient(black 55%, transparent 100%);
 }
 
+.overflow-wrap-anywhere {
+	overflow-wrap: anywhere;
+}
+
 /* width */
 ::-webkit-scrollbar {
     width: 5px;

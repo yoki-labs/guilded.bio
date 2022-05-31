@@ -3,8 +3,10 @@ import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { ModifiedSession } from "../../types/session";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
+import { ModifiedSession } from "../../types/session";
 import NameBadge from "../../components/profile/nameBadge";
 import { fetchUser } from "../../lib/api";
 import prisma from "../../lib/prisma";
@@ -13,19 +15,25 @@ import { MouseEventHandler, useState } from "react";
 import Button from "../../components/button";
 import { DeNullishFilter } from "../../utility/utils";
 import { UserFlairs } from "../../components/profile/flairs";
-import { useRouter } from "next/router";
-import Link from "next/link";
+import countries from "../../utility/countries";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const { id } = ctx.params as { id: string };
     const storedUser = id ? await prisma.user.findFirst({ where: { id }, include: { defaultBio: true } }) : null;
     const APIUser = storedUser ? await fetchUser(id) : null;
+    if (storedUser && APIUser) {
+        (APIUser as ModifiedGuildedUser).country = storedUser.country;
+    }
 
     return { props: { user: APIUser, bio: storedUser?.defaultBio ?? null } };
 };
 
+interface ModifiedGuildedUser extends GuildedUser {
+    country: string | null;
+};
+
 type Props = {
-    user: GuildedUser;
+    user: ModifiedGuildedUser;
     bio: Bio | null;
 };
 
@@ -43,6 +51,7 @@ function ToolbarButton(props: { icon: string; onClick: MouseEventHandler }) {
 const UserPage: NextPage<Props> = ({ user, bio }) => {
     const { data: session } = useSession();
     const [isInEditingMode, setIsInEditingMode] = useState(false);
+    const [isInUserEditingMode, setIsInUserEditingMode] = useState(false);
     const [bioContent, setBioContent] = useState(bio?.content);
     const [newBioContent, setNewBioContent] = useState(bioContent);
     const router = useRouter();
@@ -124,17 +133,61 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                         <div className="flex">
                             <div className="flex">
                                 <Image src={user.profilePicture} alt={`${user.name}'s avatar`} className="rounded-full shadow-md" height="120" width="120" />
-                                {isCurrentUser && (
-                                    <Link href="/settings">
-                                        <a className="z-10 mt-auto">
-                                            <i className="ci-settings rounded-full p-1 text-xl -ml-7 bg-guilded-slate text-guilded-subtitle hover:text-guilded-white transition-colors" />
-                                        </a>
-                                    </Link>
+                                {isCurrentUser && !isInUserEditingMode && (
+                                    <>
+                                    <div className="z-10 mb-auto translate-x-1 translate-y-1 text-lg text-guilded-subtitle">
+                                        <button
+                                            className=""
+                                            onClick={() => {
+                                                setIsInUserEditingMode(true);
+                                            }}
+                                        >
+                                            <i className="ci-edit rounded-full p-1 -ml-7 bg-guilded-slate hover:text-guilded-white transition-colors" />
+                                        </button>
+                                    </div>
+                                    <div className="z-10 mt-auto translate-x-1 translate-y-1 text-lg text-guilded-subtitle">
+                                        <Link href="/settings">
+                                            <a>
+                                                <i className="ci-settings rounded-full p-1 -ml-7 bg-guilded-slate hover:text-guilded-white transition-colors" />
+                                            </a>
+                                        </Link>
+                                    </div>
+                                    </>
                                 )}
                             </div>
                             <div className="flex flex-col pl-6 my-auto">
                                 <div className="flex">
-                                    <h1 className="pr-2 text-2xl md:text-3xl font-bold">{user.name}</h1>
+                                    <h1 className="pr-2 text-2xl md:text-3xl font-bold">
+                                        <span className={isInUserEditingMode || user.country ? "mr-2": ""}>{user.name}</span>
+                                        {user.country && !isInUserEditingMode && (
+                                            <span title={`Flag of ${countries[user.country].name}`}>
+                                                {countries[user.country].emoji}
+                                            </span>
+                                        )}
+                                        {isInUserEditingMode && (
+                                            <select
+                                                defaultValue={user.country ?? "null"}
+                                                className="text-sm bg-guilded-gray border border-white/10 rounded max-w-[160px]"
+                                                onChange={async (e: any) => {
+                                                    const country = e.currentTarget.selectedOptions[0]?.value;
+                                                    if (!country || country === "null") return;
+
+                                                    await fetch(`/api/users/${user.id}`, {
+                                                        method: "PATCH",
+                                                        headers: { "Content-Type": "application/json" },
+                                                        body: JSON.stringify({ country }),
+                                                    })
+                                                }}
+                                            >
+                                                <option disabled value="null">Countries</option>
+                                                {Object.keys(countries).map(code => (
+                                                    <option key={code} value={code}>
+                                                        {countries[code].emoji} {countries[code].name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        )}
+                                    </h1>
                                     {isCurrentUser && <NameBadge text="You" color="blue" />}
                                     {badges.map((b) => (
                                         <NameBadge key={b.iconUrl} iconURL={b.iconUrl} text={b.label} color={b.color} />

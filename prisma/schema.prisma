@@ -14,7 +14,7 @@ model User {
     defaultBio   Bio?    @relation(fields: [defaultBioId], references: [id], name: "DefaultBio")
     defaultBioId Int?    @unique
     bios         Bio[]   @relation("BioAuthor")
-
+    country      String? @db.VarChar(2)
 }
 
 model Bio {

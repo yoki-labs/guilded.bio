@@ -8,13 +8,27 @@ import { BadRequest, InternalError, NoContent, Unauthenticated } from "../../../
 const DeleteUserRoute = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getSession({ req });
     if (!session?.user) return Unauthenticated(res);
+    const id = (session.user as ModifiedSession).id;
 
     // Delete all bios & the user themself
     if (req.method === "DELETE") {
-        const id = (session.user as ModifiedSession).id;
-
         try {
             await prisma.user.delete({ where: { id } });
+            return NoContent(res);
+        } catch (e) {
+            if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e.code === "P2025") {
+                    return BadRequest(res, "The specified user does not exist.");
+                }
+            }
+            console.error(e);
+            return InternalError(res);
+        }
+    } else if (req.method === "PATCH") {
+        try {
+            await prisma.user.update({ where: { id }, data: {
+                country: req.body.country,
+            } });
             return NoContent(res);
         } catch (e) {
             if (e instanceof Prisma.PrismaClientKnownRequestError) {

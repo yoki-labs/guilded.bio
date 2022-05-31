@@ -180,7 +180,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                             <div className="flex">
                                 <div className="flex w-full max-h-48 overflow-y-auto overflow-x-hidden">
                                     {bio?.content ? (
-                                        <p className="text-clip break-all whitespace-pre-wrap">{bioContent}</p>
+                                        <p className="text-clip whitespace-pre-wrap">{bioContent}</p>
                                     ) : (
                                         <p className="italic text-guilded-subtitle break-all">
                                             No content yet, but we&apos;re sure they&apos;re an amazing person!

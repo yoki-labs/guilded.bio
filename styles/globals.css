@@ -21,7 +21,12 @@ body::-webkit-scrollbar {
 }
 
 .overflow-wrap-anywhere {
-	overflow-wrap: anywhere;
+    overflow-wrap: anywhere;
+}
+
+button:disabled {
+    background-color: gray;
+    cursor: not-allowed;
 }
 
 /* width */

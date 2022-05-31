@@ -1,7 +1,9 @@
 export default function Button(props: any) {
     const colorName: string = props.color ?? "gilded";
     let className = "px-4 py-1 rounded text-lg ";
+
     if (props.bold === "true") className += "font-bold ";
+
     switch (colorName) {
         case "gilded":
             className += "bg-guilded-gilded text-guilded-black";
@@ -15,5 +17,5 @@ export default function Button(props: any) {
         default:
             break;
     }
-    return <button className={className} {...props} />;
+    return <button disabled={props.disabled ?? false} className={className} {...props} />;
 }

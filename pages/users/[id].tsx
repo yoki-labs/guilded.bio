@@ -11,9 +11,8 @@ import prisma from "../../lib/prisma";
 import { GuildedUser, BadgeName, badgeMap } from "../../types/user";
 import { MouseEventHandler, useState } from "react";
 import Button from "../../components/button";
-import { DeNullishFilter } from "../../utility/utils";
+import { DeNullishFilter, TruncateText } from "../../utility/utils";
 import { UserFlairs } from "../../components/profile/flairs";
-import { useRouter } from "next/router";
 import Link from "next/link";
 import { toast } from "react-toastify";
 
@@ -44,23 +43,32 @@ function ToolbarButton(props: { icon: string; onClick: MouseEventHandler }) {
 const UserPage: NextPage<Props> = ({ user, bio }) => {
     const { data: session } = useSession();
     const [isInEditingMode, setIsInEditingMode] = useState(false);
-    const [bioContent, setBioContent] = useState(bio?.content);
+    const [userBio, setUserBio] = useState(bio);
+
+    /**
+     * @var bioContent - Users currently saved bio
+     * @var newBioContent - Potentially new bio, which is just an edited current bio. Set equal to bioContent for initial save button disable.
+     */
+    const [bioContent, setBioContent] = useState(userBio?.content);
     const [newBioContent, setNewBioContent] = useState(bioContent);
-    const router = useRouter();
+
     const handleSubmit = async (event: any) => {
         // Stop the form from submitting and refreshing the page.
         event.preventDefault();
 
         if (!event.target) return;
 
+        // If the bio hasn't changed ignore.
+        if (newBioContent === bioContent) return;
+
         // Send the form data to our forms API on Vercel and get a response.
-        const response = await fetch(bio ? `/api/users/${user.id}/bios/${bio.id}` : `/api/users/${user.id}/bios`, {
-            method: bio ? "PUT" : "POST",
+        const response = await fetch(userBio ? `/api/users/${user.id}/bios/${userBio.id}` : `/api/users/${user.id}/bios`, {
+            method: userBio ? "PUT" : "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             // author: user.id is a placeholder for now until i get auth on the API settled.
-            body: JSON.stringify(bio ? { content: newBioContent } : { content: newBioContent, default: true, author: user.id }),
+            body: JSON.stringify(userBio ? { content: newBioContent } : { content: newBioContent, default: true, author: user.id }),
         });
 
         if (!response.ok) {
@@ -71,13 +79,35 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
             }))) as { error: { message: string } };
             return toast.error(data.error.message);
         }
+
         const data = (await response.json()) as { bio: Bio };
-        if (!bio) router.reload();
-        else {
-            setIsInEditingMode(false);
-            setBioContent(data.bio.content);
-        }
+
+        setIsInEditingMode(false);
+
+        // User bio
+        setUserBio(data.bio);
+        setBioContent(data.bio.content);
+        setNewBioContent(data.bio.content);
+
         return true;
+    };
+
+    const handleDelete = async () => {
+        const confirmed = confirm("Are you sure you want to delete this bio? This cannot be undone!");
+        if (!confirmed || !userBio) return;
+
+        const response = await fetch(`/api/users/${user.id}/bios/${userBio.id}`, {
+            method: "DELETE",
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            return toast.error(data.error.message);
+        }
+
+        setUserBio(null);
+        setBioContent("");
+        setNewBioContent("");
     };
 
     if (!user) {
@@ -109,13 +139,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                 <meta property="og:image" content={user.profilePictureLg} />
                 <meta
                     property="og:description"
-                    content={`${
-                        bio?.content
-                            ? bio.content.length > 125
-                                ? bio.content.slice(0, 125) + "..."
-                                : bio.content
-                            : "No bio yet, but we're sure they're an amazing person!"
-                    }`}
+                    content={`${bioContent?.length ? TruncateText(bioContent, 125) : "No bio yet, but we're sure they're an amazing person!"}`}
                 />
                 <meta name="theme-color" content="#F5C400" />
             </Head>
@@ -150,7 +174,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                 <div className="text-white flex flex-wrap">
                                     <textarea
                                         id="newBioContent"
-                                        defaultValue={bio?.content ? bioContent : ""}
+                                        defaultValue={bioContent?.length ? bioContent : ""}
                                         maxLength={250}
                                         onChange={(data) => setNewBioContent(data.target.value)}
                                         className="w-full px-3 pt-3 pb-40 rounded-lg bg-guilded-gray resize-none"
@@ -163,8 +187,8 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                         {newBioContent == null ? 0 : newBioContent.length}/250
                                     </p>
                                 </div>
-                                <div className="pt-4">
-                                    <Button>Save</Button>
+                                <div className="pt-2">
+                                    <Button disabled={newBioContent === bioContent}>Save</Button>
                                     <button
                                         form=""
                                         className="ml-3 font-bold text-guilded-subtitle hover:text-guilded-white transition-colors"
@@ -180,7 +204,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                         ) : (
                             <div className="flex">
                                 <div className="flex w-full max-h-48 overflow-y-auto overflow-x-hidden">
-                                    {bio?.content ? (
+                                    {bioContent?.length ? (
                                         <p className="text-clip whitespace-pre-wrap overflow-wrap-anywhere">{bioContent}</p>
                                     ) : (
                                         <p className="italic text-guilded-subtitle break-all">
@@ -196,26 +220,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                                 setIsInEditingMode(true);
                                             }}
                                         />
-                                        {bio && (
-                                            <ToolbarButton
-                                                icon="trash_full"
-                                                onClick={async () => {
-                                                    const confirmed = confirm("Are you sure you want to delete this bio? This cannot be undone!");
-                                                    if (!confirmed) return;
-
-                                                    const response = await fetch(`/api/users/${user.id}/bios/${bio.id}`, {
-                                                        method: "DELETE",
-                                                    });
-
-                                                    if (!response.ok) {
-                                                        const data = await response.json();
-                                                        return alert(`Error: ${data.error.message}`);
-                                                    }
-                                                    // Not ideal
-                                                    router.reload();
-                                                }}
-                                            />
-                                        )}
+                                        {userBio && !!bioContent?.length && <ToolbarButton icon="trash_full" onClick={handleDelete} />}
                                     </div>
                                 )}
                             </div>

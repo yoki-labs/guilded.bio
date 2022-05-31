@@ -15,6 +15,7 @@ import { DeNullishFilter } from "../../utility/utils";
 import { UserFlairs } from "../../components/profile/flairs";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { toast } from "react-toastify";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const { id } = ctx.params as { id: string };
@@ -68,7 +69,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                     message: "Unparseable.",
                 },
             }))) as { error: { message: string } };
-            return alert(`Error!: ${data.error.message}`);
+            return toast.error(data.error.message);
         }
         const data = (await response.json()) as { bio: Bio };
         if (!bio) router.reload();

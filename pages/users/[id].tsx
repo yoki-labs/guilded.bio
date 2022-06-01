@@ -149,7 +149,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
 						<div style={{
 							backgroundImage: `linear-gradient(to top, rgb(41 43 50 / var(--tw-bg-opacity)) 5%, transparent 60%), url(${user.profileBannerLg ?? '/default-banner.png'})`,
 							height: "250px",
-						}} className={`rounded-t-[10px] bg-contain rounded-b-none bg-no-repeat`}>
+						}} className={`rounded-t-[10px] bg-contain sm:bg-cover sm:bg-center rounded-b-none bg-no-repeat`}>
 							<div className="pl-4 sm:pl-6 h-full flex-col sm:flex-row flex align-center">
 								<div className="h-fit mt-auto sm:my-auto flex relative rounded-full">
 									<img src={user.profilePicture} alt={`${user.name}'s avatar`} className="rounded-full shadow-md bg-guilded-slate guilded-border-solid" height="120" width="120" />

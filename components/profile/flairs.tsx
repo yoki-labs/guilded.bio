@@ -29,10 +29,7 @@ export const GilGang = () => (
     <img
         src="/gilgang.png"
         alt="gil gang"
-        style={{
-            height: "20px",
-            width: "25px",
-        }}
+		className="h-[20px] w-[25px]"
     />
 );
 
@@ -44,10 +41,10 @@ export const UserFlairs = (props: { user: GuildedUser }) => {
 
     return (
         <div id="flairs" className="flex gap-1 vertical-align">
-            {!!numStonks && <div className="flex"> {Stonks(numStonks)} </div>}
-            {!!numGold && <div className="flex"> {Gold(numGold)} </div>}
+            {!!numStonks && <div className="z-0 flex"> {Stonks(numStonks)} </div>}
+            {!!numGold && <div className="z-0 flex"> {Gold(numGold)} </div>}
             {!!isGilGang && (
-                <div className="flex">
+                <div className="z-0 flex">
                     {" "}
                     <GilGang />{" "}
                 </div>

@@ -145,43 +145,46 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
             </Head>
             <div className="bg-guilded-gray text-guilded-white w-full min-h-screen">
                 <div className="mx-auto max-w-2xl py-8 px-4">
-					<div className="h-[200px]">
-						<div style={{
-							backgroundImage: `linear-gradient(to top, rgb(41 43 50 / var(--tw-bg-opacity)) 5%, transparent 60%), url(${user.profileBannerLg ?? '/default-banner.png'})`,
-							backgroundSize: "cover",
-							backgroundPosition: "center top",
-							height: "100%",
-							width: "100%"
-						}} className={`rounded-t-[10px] bg-center rounded-b-none bg-no-repeat`}>
-							<div className="pt-6 pl-4 sm:pl-6 h-full flex-col sm:flex-row flex align-center">
-								<div className="h-fit mt-auto sm:my-auto flex relative rounded-full">
-									<img src={user.profilePicture} alt={`${user.name}'s avatar`} className="rounded-full shadow-md bg-guilded-slate guilded-border-solid" height="120" width="120" />
-									{isCurrentUser && (
-										<Link href="/settings">
-											<a className="z-10 mt-auto">
-												<i className="ci-settings rounded-full p-1 text-xl -ml-7 bg-guilded-slate text-guilded-subtitle hover:text-guilded-white transition-colors" />
-											</a>
-										</Link>
-									)}
-								</div>								
-								<div className="flex flex-col sm:pt-4 sm:pl-4 mb-auto sm:my-auto">
-									<div className="flex-col md:flex-row flex">
-										<div className="flex">
-											<h1 className={`text-shadow pr-2 ${user.name.length > 15 ? 'text-xl truncate' : 'text-2xl'} font-bold`}>{user.name}</h1>
-											{isCurrentUser && <NameBadge text="You" color="blue" />}
-										</div>
-										<div className="flex mt-1">
-											{badges.map((b) => (
-												<NameBadge key={b.iconUrl} iconURL={b.iconUrl} text={b.label} color={b.color} />
-											))}
-										</div>
+					<div className="h-[200px] relative">
+						<Image 
+							src={user.profileBannerLg ?? '/default-banner.png'}
+							height="100%"
+							width="100%"
+							layout="fill"
+							objectFit="cover"
+							objectPosition="top"
+							className={`z-0 rounded-t-[10px] bg-center rounded-b-none bg-no-repeat`}
+						/>
+						<div className="linear-gradient-slated h-full w-full absolute"/>
+
+						<div className="pt-4 pl-4 sm:pt-6 sm:pl-6 h-full flex-col sm:flex-row flex align-center">
+							<div className="h-fit mt-auto sm:my-auto flex relative rounded-full">
+								<img src={user.profilePicture} alt={`${user.name}'s avatar`} className="rounded-full shadow-md bg-guilded-slate guilded-border-solid" height="120" width="120" />
+								{isCurrentUser && (
+									<Link href="/settings">
+										<a className="mt-auto">
+											<i className="ci-settings rounded-full p-1 text-xl -ml-7 bg-guilded-slate text-guilded-subtitle hover:text-guilded-white transition-colors" />
+										</a>
+									</Link>
+								)}
+							</div>								
+							<div className="flex flex-col sm:pt-4 sm:pl-4 mb-auto sm:my-auto">
+								<div className="flex-col md:flex-row flex">
+									<div className="z-10 flex">
+										<h1 className={`text-shadow pr-2 ${user.name.length > 15 ? 'text-xl truncate' : 'text-2xl'} font-bold`}>{user.name}</h1>
+										{isCurrentUser && <NameBadge text="You" color="blue" />}
 									</div>
-									<UserFlairs user={user} />
+									<div className="z-0 flex mt-1">
+										{badges.map((b) => (
+											<NameBadge key={b.iconUrl} iconURL={b.iconUrl} text={b.label} color={b.color} />
+										))}
+									</div>
 								</div>
+								<UserFlairs user={user} />
 							</div>
 						</div>
 					</div>
-                    <div className="bg-guilded-slate rounded-xl rounded-t-none p-5 pt-4 sm:px-8 shadow">
+                    <div className="bg-guilded-slate rounded-xl rounded-t-none p-5 pt-6 sm:px-8 shadow">
                         {isInEditingMode ? (
                             <form onSubmit={handleSubmit}>
                                 <div className="text-white flex flex-wrap">

@@ -20,6 +20,10 @@ body::-webkit-scrollbar {
     mask-image: linear-gradient(rgb(41 43 50 / var(--tw-bg-opacity)) 20%, transparent 100%);
 }
 
+.linear-gradient-slated {
+	background: linear-gradient(to top, rgb(41 43 50 / var(--tw-bg-opacity)) 5%, transparent 100%)
+}
+
 .overflow-wrap-anywhere {
     overflow-wrap: anywhere;
 }

@@ -16,7 +16,7 @@ model User {
     avatar       String?  @db.Text
     name         String?  @db.Text
     stonks       Int?     @db.Integer
-    flairInfos   Json?
+    flairInfos   Json[]
     badges       String[]
     defaultBioId Int?     @unique
     bios         Bio[]    @relation("BioAuthor")

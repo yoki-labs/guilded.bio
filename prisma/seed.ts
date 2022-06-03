@@ -9,14 +9,17 @@ async function main() {
             {
                 id: "pmbOB8VA",
                 email: "nico@guilded.bio",
+                flairInfos: [],
             },
             {
                 id: "EdVMVKR4",
                 email: "shay@guilded.bio",
+                flairInfos: [],
             },
             {
                 id: "0mqNyllA",
                 email: "panku@guilded.bio",
+                flairInfos: [],
             },
         ],
     });

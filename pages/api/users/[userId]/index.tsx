@@ -4,17 +4,36 @@ import prisma from "../../../../lib/prisma";
 import { Prisma } from "@prisma/client";
 import { ModifiedSession } from "../../../../types/session";
 import { BadRequest, InternalError, NoContent, Unauthenticated } from "../../../../utility/http";
+import countries from "../../../../utility/countries"
 
-const DeleteUserRoute = async (req: NextApiRequest, res: NextApiResponse) => {
+const UserRoute = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getSession({ req });
     if (!session?.user) return Unauthenticated(res);
+    const id = (session.user as ModifiedSession).id;
 
-    // Delete all bios & the user themself
     if (req.method === "DELETE") {
-        const id = (session.user as ModifiedSession).id;
-
+        // Delete all bios & the user themself
         try {
             await prisma.user.delete({ where: { id } });
+            return NoContent(res);
+        } catch (e) {
+            if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e.code === "P2025") {
+                    return BadRequest(res, "The specified user does not exist.");
+                }
+            }
+            console.error(e);
+            return InternalError(res);
+        }
+    } else if (req.method === "PATCH") {
+        // Update the user
+        if (req.body.country && !Object.keys(countries).includes(req.body.country)) {
+            return BadRequest(res, "Invalid country code.");
+        }
+        try {
+            await prisma.user.update({ where: { id }, data: {
+                country: req.body.country,
+            } });
             return NoContent(res);
         } catch (e) {
             if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -28,4 +47,4 @@ const DeleteUserRoute = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 };
 
-export default DeleteUserRoute;
+export default UserRoute;

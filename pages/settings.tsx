@@ -67,8 +67,18 @@ const SettingsPage: NextPage<Props> = ({ user }) => {
                             </div>
                         </div>
                     </div>
-                    <h1 className="font-bold text-2xl mt-4">Settings</h1>
-                    <p>todo</p>
+                    <h1 className="font-bold text-2xl mt-4">You</h1>
+                    <p className="text-guilded-subtitle mb-1">Global profile settings that affect all of your bios.</p>
+                    <form>
+                        <ul>
+                            <li>
+                                <label>
+                                    <input type="checkbox" />{" "}
+                                    Display a link to <a className="text-guilded-link" href={`https://guilded.gg/profile/${user.id}`}>your Guilded profile</a>
+                                </label>
+                            </li>
+                        </ul>
+                    </form>
                     <h1 className="font-bold text-2xl mt-2">Destructive</h1>
                     <Button
                         color="red"

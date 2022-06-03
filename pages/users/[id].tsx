@@ -3,8 +3,10 @@ import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { ModifiedSession } from "../../types/session";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
+import { ModifiedSession } from "../../types/session";
 import NameBadge from "../../components/profile/nameBadge";
 import { fetchUser } from "../../lib/api";
 import prisma from "../../lib/prisma";
@@ -13,19 +15,26 @@ import { MouseEventHandler, useState } from "react";
 import Button from "../../components/button";
 import { DeNullishFilter, TruncateText } from "../../utility/utils";
 import { UserFlairs } from "../../components/profile/flairs";
-import Link from "next/link";
+import countries from "../../utility/countries";
 import { toast } from "react-toastify";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const { id } = ctx.params as { id: string };
     const storedUser = id ? await prisma.user.findFirst({ where: { id }, include: { defaultBio: true } }) : null;
     const APIUser = storedUser ? await fetchUser(id) : null;
+    if (storedUser && APIUser) {
+        (APIUser as ModifiedGuildedUser).country = storedUser.country;
+    }
 
     return { props: { user: APIUser, bio: storedUser?.defaultBio ?? null } };
 };
 
+interface ModifiedGuildedUser extends GuildedUser {
+    country: string | null;
+};
+
 type Props = {
-    user: GuildedUser;
+    user: ModifiedGuildedUser;
     bio: Bio | null;
 };
 
@@ -43,6 +52,7 @@ function ToolbarButton(props: { icon: string; onClick: MouseEventHandler }) {
 const UserPage: NextPage<Props> = ({ user, bio }) => {
     const { data: session } = useSession();
     const [isInEditingMode, setIsInEditingMode] = useState(false);
+    const [isInUserEditingMode, setIsInUserEditingMode] = useState(false);
     const [userBio, setUserBio] = useState(bio);
 
     /**
@@ -145,47 +155,90 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
             </Head>
             <div className="bg-guilded-gray text-guilded-white w-full min-h-screen">
                 <div className="mx-auto max-w-2xl py-8 px-4">
-					<div className="h-[200px] relative">
-						<Image 
-							src={user.profileBannerLg ?? '/default-banner.png'}
-							height="100%"
-							width="100%"
-							layout="fill"
-							objectFit="cover"
-							objectPosition="top"
-							className={`z-0 rounded-t-[10px] bg-center rounded-b-none bg-no-repeat`}
-						/>
-						<div className="linear-gradient-slated h-full w-full absolute"/>
+                    <div className="h-[200px] relative">
+                        <Image 
+                            src={user.profileBannerLg ?? '/default-banner.png'}
+                            height="100%"
+                            width="100%"
+                            layout="fill"
+                            objectFit="cover"
+                            objectPosition="top"
+                            className={`z-0 rounded-t-[10px] bg-center rounded-b-none bg-no-repeat`}
+                        />
+                        <div className="linear-gradient-slated h-full w-full absolute" />
+                        <div className="pt-4 pl-4 sm:pt-6 sm:pl-6 h-full flex-col sm:flex-row flex align-center">
+                            <div className="h-fit mt-auto sm:my-auto flex relative rounded-full">
+                                <img src={user.profilePicture} alt={`${user.name}'s avatar`} className="rounded-full shadow-md bg-guilded-slate guilded-border-solid" height="120" width="120" />
+                                {isCurrentUser && !isInUserEditingMode && (
+                                    <>
+                                    <div className="z-10 mb-auto translate-x-1 translate-y-1 text-lg text-guilded-subtitle">
+                                        <button
+                                            className=""
+                                            onClick={() => {
+                                                setIsInUserEditingMode(true);
+                                            }}
+                                        >
+                                            <i className="ci-edit rounded-full p-1 -ml-7 bg-guilded-slate hover:text-guilded-white transition-colors" />
+                                        </button>
+                                    </div>
+                                    <div className="z-10 mt-auto translate-x-1 translate-y-1 text-lg text-guilded-subtitle">
+                                        <Link href="/settings">
+                                            <a>
+                                                <i className="ci-settings rounded-full p-1 -ml-7 bg-guilded-slate hover:text-guilded-white transition-colors" />
+                                            </a>
+                                        </Link>
+                                    </div>
+                                    </>
+                                )}
+                            </div>
+                            <div className="flex flex-col sm:pt-4 sm:pl-4 mb-auto sm:my-auto">
+                                <div className="flex-col md:flex-row flex">
+                                    <div className="z-10 flex">
+                                        <h1 className="pr-2 text-2xl md:text-3xl font-bold">
+                                            <span className={`text-shadow ${user.name.length > 15 ? 'text-xl truncate' : 'text-2xl'} font-bold ${isInUserEditingMode ? "mr-2": ""}`}>{user.name}</span>
+                                            {isInUserEditingMode && (
+                                                <select
+                                                    defaultValue={user.country ?? "null"}
+                                                    className="text-sm bg-guilded-gray border border-white/10 rounded max-w-[160px]"
+                                                    onChange={async (e: any) => {
+                                                        const country = e.currentTarget.selectedOptions[0]?.value;
+                                                        if (!country || country === "null") return;
 
-						<div className="pt-4 pl-4 sm:pt-6 sm:pl-6 h-full flex-col sm:flex-row flex align-center">
-							<div className="h-fit mt-auto sm:my-auto flex relative rounded-full">
-								<img src={user.profilePicture} alt={`${user.name}'s avatar`} className="rounded-full shadow-md bg-guilded-slate guilded-border-solid" height="120" width="120" />
-								{isCurrentUser && (
-									<Link href="/settings">
-										<a className="mt-auto">
-											<i className="ci-settings rounded-full p-1 text-xl -ml-7 bg-guilded-slate text-guilded-subtitle hover:text-guilded-white transition-colors" />
-										</a>
-									</Link>
-								)}
-							</div>								
-							<div className="flex flex-col sm:pt-4 sm:pl-4 mb-auto sm:my-auto">
-								<div className="flex-col md:flex-row flex">
-									<div className="z-10 flex">
-										<h1 className={`text-shadow pr-2 ${user.name.length > 15 ? 'text-xl truncate' : 'text-2xl'} font-bold`}>{user.name}</h1>
-										{isCurrentUser && <NameBadge text="You" color="blue" />}
-									</div>
-									<div className="z-0 flex mt-1">
-										{badges.map((b) => (
-											<NameBadge key={b.iconUrl} iconURL={b.iconUrl} text={b.label} color={b.color} />
-										))}
-									</div>
-								</div>
-								<UserFlairs user={user} />
-							</div>
-						</div>
-					</div>
+                                                        await fetch(`/api/users/${user.id}`, {
+                                                            method: "PATCH",
+                                                            headers: { "Content-Type": "application/json" },
+                                                            body: JSON.stringify({ country }),
+                                                        })
+                                                    }}
+                                                >
+                                                    <option disabled value="null">Countries</option>
+                                                    {Object.keys(countries).map(code => (
+                                                        <option key={code} value={code}>
+                                                            {countries[code].emoji} {countries[code].name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            )}
+                                        </h1>
+                                        {user.country && !isInUserEditingMode && (
+                                            <span title={`Flag of ${countries[user.country].name}`} className="text-2xl mt-auto -mb-[2px] mr-2">
+                                                {countries[user.country].emoji}
+                                            </span>
+                                        )}
+                                        {isCurrentUser && <NameBadge text="You" color="blue" />}
+                                    </div>
+                                </div>
+                                <div className="z-0 flex mt-1">
+                                    {badges.map((b) => (
+                                        <NameBadge key={b.iconUrl} iconURL={b.iconUrl} text={b.label} color={b.color} />
+                                    ))}
+                                </div>
+                                <UserFlairs user={user} />
+                            </div>
+                        </div>
+                    </div>
                     <div className="bg-guilded-slate rounded-xl rounded-t-none p-5 pt-6 sm:px-8 shadow">
-                        {isInEditingMode ? (
+                      {isInEditingMode ? (
                             <form onSubmit={handleSubmit}>
                                 <div className="text-white flex flex-wrap">
                                     <textarea

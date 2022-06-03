@@ -1,13 +1,12 @@
-import { User } from "@prisma/client";
 import Image from "next/image";
-import { BareUser, GuildedUser } from "../../types/user";
+import { GuildedUser } from "../../types/user";
 
 export const Stonks = (numStonks: number) => {
     // Guilded only displays 3 images max for stonks, so if a user has more than 3 this prevents from adding more than 3.
     const maxStonks = Math.min(3, numStonks);
     const stonks = [...Array(maxStonks)].map((_, i) => (
         <div key={i} className={`first:z-20 even:z-10 last:z-0 even:-ml-[14px] ${maxStonks !== 1 ? "last:-ml-[14px]" : ""}`}>
-            <Image src="/stonks.png" height="20" width="20" />
+            <Image src="/stonks.png" height="20" width="20" alt="stonks" />
         </div>
     ));
 
@@ -19,7 +18,7 @@ export const Gold = (numGold: number) => {
     const maxGold = Math.min(5, numGold);
     const gold = [...Array(maxGold)].map((_, i) => (
         <div key={i} className={i === 0 ? "" : "-ml-[14px]"}>
-            <Image src="/guilded-gold.png" height="20" width="20" />
+            <Image src="/guilded-gold.png" height="20" width="20" alt="gold" />
         </div>
     ));
 

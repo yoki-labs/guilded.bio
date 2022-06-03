@@ -158,12 +158,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                             <div className="flex flex-col pl-6 my-auto">
                                 <div className="flex">
                                     <h1 className="pr-2 text-2xl md:text-3xl font-bold">
-                                        <span className={isInUserEditingMode || user.country ? "mr-2": ""}>{user.name}</span>
-                                        {user.country && !isInUserEditingMode && (
-                                            <span title={`Flag of ${countries[user.country].name}`}>
-                                                {countries[user.country].emoji}
-                                            </span>
-                                        )}
+                                        <span className={isInUserEditingMode ? "mr-2": ""}>{user.name}</span>
                                         {isInUserEditingMode && (
                                             <select
                                                 defaultValue={user.country ?? "null"}
@@ -188,6 +183,11 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                             </select>
                                         )}
                                     </h1>
+                                    {user.country && !isInUserEditingMode && (
+                                        <span title={`Flag of ${countries[user.country].name}`} className="text-2xl mt-auto -mb-[2px] mr-2">
+                                            {countries[user.country].emoji}
+                                        </span>
+                                    )}
                                     {isCurrentUser && <NameBadge text="You" color="blue" />}
                                     {badges.map((b) => (
                                         <NameBadge key={b.iconUrl} iconURL={b.iconUrl} text={b.label} color={b.color} />

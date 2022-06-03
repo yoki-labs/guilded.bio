@@ -8,12 +8,18 @@ datasource db {
 }
 
 model User {
-    id           String  @id @unique @db.VarChar(255)
-    email        String? @unique @db.Text
-    private      Boolean @default(false) @db.Boolean
-    defaultBio   Bio?    @relation(fields: [defaultBioId], references: [id], name: "DefaultBio")
-    defaultBioId Int?    @unique
-    bios         Bio[]   @relation("BioAuthor")
+    id           String   @id @unique @db.VarChar(255)
+    email        String?  @unique @db.Text
+    private      Boolean  @default(false) @db.Boolean
+    defaultBio   Bio?     @relation(fields: [defaultBioId], references: [id], name: "DefaultBio")
+    banner       String?  @db.Text
+    avatar       String?  @db.Text
+    name         String?  @db.Text
+    stonks       Int?     @db.Integer
+    flairInfos   Json
+    badges       String[]
+    defaultBioId Int?     @unique
+    bios         Bio[]    @relation("BioAuthor")
 
 }
 

@@ -4,6 +4,9 @@ import { SessionProvider } from "next-auth/react";
 import Layout from "./layout";
 import Head from "next/head";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     return (
         <>
@@ -17,6 +20,17 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
             <SessionProvider session={session}>
                 <Layout>
                     <Component {...pageProps} />
+                    <ToastContainer
+                        position="top-center"
+                        autoClose={5000}
+                        hideProgressBar={false}
+                        newestOnTop={false}
+                        closeOnClick
+                        rtl={false}
+                        pauseOnFocusLoss
+                        draggable
+                        pauseOnHover
+                    />
                 </Layout>
             </SessionProvider>
         </>

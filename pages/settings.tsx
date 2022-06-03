@@ -9,6 +9,7 @@ import { fetchUser } from "../lib/api";
 import { GuildedUser, BadgeName, badgeMap } from "../types/user";
 import Button from "../components/button";
 import { DeNullishFilter } from "../utility/utils";
+import { toast } from "react-toastify";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const user = (await getSession({ req: context.req }))?.user as ModifiedSession | undefined;
@@ -30,11 +31,11 @@ type Props = {
 };
 
 function isGuildedUser(object: any): object is GuildedUser {
-    return 'profilePicture' in object;
+    return "profilePicture" in object;
 }
 
 const SettingsPage: NextPage<Props> = ({ user }) => {
-    let profilePicture = 'https://img.guildedcdn.com/asset/DefaultUserAvatars/profile_1.png';
+    let profilePicture = "https://img.guildedcdn.com/asset/DefaultUserAvatars/profile_1.png";
     let badges: any[] = [];
     if (isGuildedUser(user)) {
         profilePicture = user.profilePicture ?? profilePicture;
@@ -92,7 +93,7 @@ const SettingsPage: NextPage<Props> = ({ user }) => {
 
                             if (!response.ok) {
                                 const data = await response.json();
-                                return alert(`Error: ${data.error.message}`);
+                                return toast.error(data.error.message);
                             }
                             signOut({ callbackUrl: "/" });
                         }}

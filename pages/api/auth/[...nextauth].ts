@@ -1,7 +1,11 @@
+import { Prisma } from "@prisma/client";
 import NextAuth from "next-auth";
 import Guilded from "next-auth-guilded";
+import { GuildedProfile } from "next-auth-guilded/dist/types/typings";
+import { fetchUser } from "../../../lib/api";
 import prisma from "../../../lib/prisma";
 import { ModifiedSession } from "../../../types/session";
+import { BareUser, GuildedUser } from "../../../types/user";
 
 export default NextAuth({
     secret: "SDUIAFHSDIUFHSD",
@@ -19,13 +23,27 @@ export default NextAuth({
             return session;
         },
         async signIn({ user }) {
-            const existingUser = await prisma.user.findUnique({ where: { id: user.id } });
-            if (!existingUser)
-                await prisma.user.create({
-                    data: {
-                        id: user.id,
-                    },
-                });
+            const { name, avatar, banner } = user as GuildedProfile;
+            const { stonks, flairInfos, id, badges } = (await fetchUser(user.id)) as GuildedUser;
+            const userDataToCache: Omit<BareUser, "id" | "flairInfos"> & { flairInfos: Prisma.InputJsonArray } = {
+                name,
+                avatar,
+                banner,
+                badges: badges ?? [],
+                stonks,
+                flairInfos: (flairInfos ?? []) as unknown as Prisma.InputJsonArray,
+            };
+
+            await prisma.user.upsert({
+                create: {
+                    id,
+                    ...userDataToCache,
+                },
+                update: userDataToCache,
+                where: {
+                    id,
+                },
+            });
             return true;
         },
     },

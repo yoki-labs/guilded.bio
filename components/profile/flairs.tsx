@@ -1,5 +1,6 @@
+import { User } from "@prisma/client";
 import Image from "next/image";
-import { GuildedUser } from "../../types/user";
+import { BareUser, GuildedUser } from "../../types/user";
 
 export const Stonks = (numStonks: number) => {
     // Guilded only displays 3 images max for stonks, so if a user has more than 3 this prevents from adding more than 3.
@@ -14,7 +15,7 @@ export const Stonks = (numStonks: number) => {
 };
 
 export const Gold = (numGold: number) => {
-	// OG Gold has max of 5 images, so minmax.
+    // OG Gold has max of 5 images, so minmax.
     const maxGold = Math.min(5, numGold);
     const gold = [...Array(maxGold)].map((_, i) => (
         <div key={i} className={i === 0 ? "" : "-ml-[14px]"}>
@@ -25,16 +26,9 @@ export const Gold = (numGold: number) => {
     return gold;
 };
 
-export const GilGang = () => (
-    <img
-        src="/gilgang.png"
-        alt="gil gang"
-		className="h-[20px] w-[25px]"
-    />
-);
+export const GilGang = () => <img src="/gilgang.png" alt="gil gang" className="h-[20px] w-[25px]" />;
 
-export const UserFlairs = (props: { user: GuildedUser }) => {
-    const { user } = props;
+export const UserFlairs = ({ user }: { user: Pick<GuildedUser, "flairInfos" | "stonks"> }) => {
     const numStonks = user.stonks;
     const numGold = user.flairInfos?.find((f) => f.flair === "guilded_gold_v1")?.amount ?? 0;
     const isGilGang = user.flairInfos?.find((f) => f.flair === "gil_gang");

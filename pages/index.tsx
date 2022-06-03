@@ -7,10 +7,18 @@ import { Card } from "../components/profile/card";
 import prisma from "../lib/prisma";
 import { fetchUser } from "../lib/api";
 import { GuildedUser, UserWithBio } from "../types/user";
+import { haveFullUserData } from "../utility/utils";
 
 export const getServerSideProps: GetServerSideProps = async () => {
     const dbUsers = await prisma.user.findMany({ where: {}, take: 100, include: { defaultBio: true } });
-    const fetchedUsers = await Promise.all(dbUsers.map((user) => fetchUser(user.id)));
+    const fetchedUsers = await Promise.all(
+        dbUsers.map((user) => {
+            if (haveFullUserData(user)) {
+                return user;
+            }
+            return fetchUser(user.id);
+        })
+    );
     const combinedUsers = [];
     for (const [index, fetchedUser] of fetchedUsers.entries()) {
         combinedUsers[index] = { ...dbUsers[index], ...fetchedUser };

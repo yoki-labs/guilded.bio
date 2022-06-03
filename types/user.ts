@@ -1,4 +1,4 @@
-import { Bio, User } from "@prisma/client";
+import { Bio, Prisma, User } from "@prisma/client";
 
 export interface GuildedUser {
     id: string;
@@ -37,6 +37,15 @@ export interface Alias {
 }
 
 export type UserWithBio = User & { defaultBio: Bio | null };
+export type BareUser = {
+    id: string;
+    name: string;
+    avatar: string | null;
+    banner: string | null;
+    badges: string[];
+    stonks: number;
+    flairInfos: FlairInfo[];
+};
 
 export interface FlairInfo {
     flair: "guilded_gold_v1" | "gil_gang";

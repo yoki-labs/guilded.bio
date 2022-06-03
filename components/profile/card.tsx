@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { GuildedUser } from "../../types/user";
-import { TruncateText } from "../../utility/utils";
+import { BareUser, GuildedUser } from "../../types/user";
+import { profilePicture, TruncateText } from "../../utility/utils";
 import { UserFlairs } from "./flairs";
 
-export const Card = (props: { user: GuildedUser; bio: string | null }) => {
+export const Card = (props: { user: BareUser; bio: string | null }) => {
     const { user } = props;
 
     return (
@@ -12,7 +12,7 @@ export const Card = (props: { user: GuildedUser; bio: string | null }) => {
             <a>
                 <div className="bg-guilded-slate rounded-xl p-5 md:max-w-md w-full min-h-[15rem] max-h-[15rem] overflow-hidden shadow-lg hover:shadow-sm hover:bg-[#24262d] transition">
                     <div className="flex">
-                        <Image src={user.profilePictureLg} alt={`${user.name}'s avatar`} className="rounded-full my-auto shadow" height="80" width="80" />
+                        <Image src={profilePicture(user.avatar)} alt={`${user.name}'s avatar`} className="rounded-full my-auto shadow" height="80" width="80" />
                         <div className="flex flex-col pl-4 my-auto truncate">
                             <h1 className={`my-auto font-semibold ${user.name.length > 12 ? "text-xl truncate" : "text-2xl"}`}>{user.name}</h1>
                             <UserFlairs user={user} />

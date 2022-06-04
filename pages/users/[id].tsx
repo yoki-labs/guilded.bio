@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const APIUser = storedUser ? await fetchUser(id) : null;
 
     if (storedUser?.defaultBioId) {
-        const userIp = ctx.req.headers["x-forwarded-for"] ?? ctx.req.headers["x-real-ip"];
+        const userIp = ctx.req.headers["x-forwarded-for"] ?? ctx.req.headers["x-real-ip"] ?? ctx.req.socket.remoteAddress;
         if (typeof userIp === "string") {
             const hashedIp = hashHMAC.update(userIp).digest("hex");
             if (!(await prisma.view.findMany({ where: { bioId: storedUser.defaultBioId, hashedIp } }))) {

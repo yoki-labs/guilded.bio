@@ -1,3 +1,6 @@
+-- AlterTable
+ALTER TABLE "Bio" ADD COLUMN     "views" INTEGER NOT NULL DEFAULT 0;
+
 -- CreateTable
 CREATE TABLE "View" (
     "id" SERIAL NOT NULL,

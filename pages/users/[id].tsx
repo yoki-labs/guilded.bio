@@ -15,21 +15,19 @@ import { DeNullishFilter, TruncateText } from "../../utility/utils";
 import { UserFlairs } from "../../components/profile/flairs";
 import Link from "next/link";
 import { toast } from "react-toastify";
+import { getClientIp } from "request-ip";
 import { createHmac } from "crypto";
-const hashHMAC = createHmac("sha256", process.env.HASH_SECRET!);
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    ctx.res.setHeader("Cache-Control", "public, s-maxage=10000, stale-while-revalidate=59000");
-
     const { id } = ctx.params as { id: string };
     const storedUser = id ? await prisma.user.findFirst({ where: { id }, include: { defaultBio: true } }) : null;
     const APIUser = storedUser ? await fetchUser(id) : null;
 
     if (storedUser?.defaultBioId) {
-        const userIp = ctx.req.headers["x-forwarded-for"] ?? ctx.req.headers["x-real-ip"] ?? ctx.req.socket.remoteAddress;
-        if (typeof userIp === "string") {
-            const hashedIp = hashHMAC.update(userIp).digest("hex");
-            if (!(await prisma.view.findMany({ where: { bioId: storedUser.defaultBioId, hashedIp } }))) {
+        const userIp = getClientIp(ctx.req);
+        if (userIp) {
+            const hashedIp = createHmac("sha256", process.env.HASH_SECRET!).update(userIp).digest("hex");
+            if (!(await prisma.view.findMany({ where: { bioId: storedUser.defaultBioId, hashedIp } })).length) {
                 await prisma.bio.update({ where: { id: storedUser?.defaultBioId }, data: { views: { increment: 1 } } });
                 await prisma.view.createMany({ data: { bioId: storedUser.defaultBioId, hashedIp } });
             }

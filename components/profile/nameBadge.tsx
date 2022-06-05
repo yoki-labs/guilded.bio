@@ -20,7 +20,7 @@ export default function NameBadge(props: { text: string; color: string; iconURL?
                 </div>
             )}
             {props.children}
-            <span className="uppercase text-xs text-white font-black my-auto">{props.text}</span>
+            <span className={`uppercase text-xs ${props.color === "yellow" ? "text-guilded-black" : "text-white"} font-black my-auto`}>{props.text}</span>
         </span>
     );
 }

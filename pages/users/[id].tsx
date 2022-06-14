@@ -191,7 +191,7 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
                                     <div className="z-10 flex">
                                         <h1 className={`text-shadow pr-2 ${user.name.length > 15 ? "text-xl truncate" : "text-2xl"} font-bold`}>{user.name}</h1>
                                         {isCurrentUser && <NameBadge text="You" color="blue" />}
-                                        <NameBadge text={`Views: ${bio?.views ?? 0}`} color="yellow" />
+                                        <NameBadge text={`${bio?.views ?? 0} views`} color="yellow" />
                                     </div>
                                     <div className="z-0 flex mt-1">
                                         {badges.map((b) => (

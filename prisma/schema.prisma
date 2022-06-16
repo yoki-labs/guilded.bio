@@ -24,4 +24,11 @@ model Bio {
     author    User    @relation(fields: [authorId], references: [id], name: "BioAuthor", onDelete: Cascade)
     content   String  @db.Text
     defaultOf User?   @relation("DefaultBio")
+    views     Int     @default(0) @db.Integer
+}
+
+model View {
+    id       Int    @id @default(autoincrement())
+    bioId    Int    @db.Integer
+    hashedIp String @db.VarChar(255)
 }

@@ -15,12 +15,24 @@ import { DeNullishFilter, TruncateText } from "../../utility/utils";
 import { UserFlairs } from "../../components/profile/flairs";
 import Link from "next/link";
 import { toast } from "react-toastify";
+import { getClientIp } from "request-ip";
+import { createHmac } from "crypto";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const { id } = ctx.params as { id: string };
     const storedUser = id ? await prisma.user.findFirst({ where: { id }, include: { defaultBio: true } }) : null;
     const APIUser = storedUser ? await fetchUser(id) : null;
 
+    if (storedUser?.defaultBioId) {
+        const userIp = getClientIp(ctx.req);
+        if (userIp) {
+            const hashedIp = createHmac("sha256", process.env.HASH_SECRET!).update(userIp).digest("hex");
+            if (!(await prisma.view.findMany({ where: { bioId: storedUser.defaultBioId, hashedIp } })).length) {
+                await prisma.bio.update({ where: { id: storedUser?.defaultBioId }, data: { views: { increment: 1 } } });
+                await prisma.view.createMany({ data: { bioId: storedUser.defaultBioId, hashedIp } });
+            }
+        }
+    }
     return { props: { user: APIUser, bio: storedUser?.defaultBio ?? null } };
 };
 
@@ -145,45 +157,52 @@ const UserPage: NextPage<Props> = ({ user, bio }) => {
             </Head>
             <div className="bg-guilded-gray text-guilded-white w-full min-h-screen">
                 <div className="mx-auto max-w-2xl py-8 px-4">
-					<div className="h-[200px] relative">
-						<Image 
-							src={user.profileBannerLg ?? '/default-banner.png'}
-							height="100%"
-							width="100%"
-							layout="fill"
-							objectFit="cover"
-							objectPosition="top"
-							className={`z-0 rounded-t-[10px] bg-center rounded-b-none bg-no-repeat`}
-						/>
-						<div className="linear-gradient-slated h-full w-full absolute"/>
+                    <div className="h-[200px] relative">
+                        <Image
+                            src={user.profileBannerLg ?? "/default-banner.png"}
+                            height="100%"
+                            width="100%"
+                            layout="fill"
+                            objectFit="cover"
+                            objectPosition="top"
+                            className={`z-0 rounded-t-[10px] bg-center rounded-b-none bg-no-repeat`}
+                        />
+                        <div className="linear-gradient-slated h-full w-full absolute" />
 
-						<div className="pt-4 pl-4 sm:pt-6 sm:pl-6 h-full flex-col sm:flex-row flex align-center">
-							<div className="h-fit mt-auto sm:my-auto flex relative rounded-full">
-								<img src={user.profilePicture} alt={`${user.name}'s avatar`} className="rounded-full shadow-md bg-guilded-slate guilded-border-solid" height="120" width="120" />
-								{isCurrentUser && (
-									<Link href="/settings">
-										<a className="mt-auto">
-											<i className="ci-settings rounded-full p-1 text-xl -ml-7 bg-guilded-slate text-guilded-subtitle hover:text-guilded-white transition-colors" />
-										</a>
-									</Link>
-								)}
-							</div>								
-							<div className="flex flex-col sm:pt-4 sm:pl-4 mb-auto sm:my-auto">
-								<div className="flex-col md:flex-row flex">
-									<div className="z-10 flex">
-										<h1 className={`text-shadow pr-2 ${user.name.length > 15 ? 'text-xl truncate' : 'text-2xl'} font-bold`}>{user.name}</h1>
-										{isCurrentUser && <NameBadge text="You" color="blue" />}
-									</div>
-									<div className="z-0 flex mt-1">
-										{badges.map((b) => (
-											<NameBadge key={b.iconUrl} iconURL={b.iconUrl} text={b.label} color={b.color} />
-										))}
-									</div>
-								</div>
-								<UserFlairs user={user} />
-							</div>
-						</div>
-					</div>
+                        <div className="pt-4 pl-4 sm:pt-6 sm:pl-6 h-full flex-col sm:flex-row flex align-center">
+                            <div className="h-fit mt-auto sm:my-auto flex relative rounded-full">
+                                <img
+                                    src={user.profilePicture}
+                                    alt={`${user.name}'s avatar`}
+                                    className="rounded-full shadow-md bg-guilded-slate guilded-border-solid"
+                                    height="120"
+                                    width="120"
+                                />
+                                {isCurrentUser && (
+                                    <Link href="/settings">
+                                        <a className="mt-auto">
+                                            <i className="ci-settings rounded-full p-1 text-xl -ml-7 bg-guilded-slate text-guilded-subtitle hover:text-guilded-white transition-colors" />
+                                        </a>
+                                    </Link>
+                                )}
+                            </div>
+                            <div className="flex flex-col sm:pt-4 sm:pl-4 mb-auto sm:my-auto">
+                                <div className="flex-col md:flex-row flex">
+                                    <div className="z-10 flex">
+                                        <h1 className={`text-shadow pr-2 ${user.name.length > 15 ? "text-xl truncate" : "text-2xl"} font-bold`}>{user.name}</h1>
+                                        {isCurrentUser && <NameBadge text="You" color="blue" />}
+                                        <NameBadge text={`${bio?.views ?? 0} views`} color="yellow" />
+                                    </div>
+                                    <div className="z-0 flex mt-1">
+                                        {badges.map((b) => (
+                                            <NameBadge key={b.iconUrl} iconURL={b.iconUrl} text={b.label} color={b.color} />
+                                        ))}
+                                    </div>
+                                </div>
+                                <UserFlairs user={user} />
+                            </div>
+                        </div>
+                    </div>
                     <div className="bg-guilded-slate rounded-xl rounded-t-none p-5 pt-6 sm:px-8 shadow">
                         {isInEditingMode ? (
                             <form onSubmit={handleSubmit}>

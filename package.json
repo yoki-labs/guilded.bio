@@ -13,7 +13,7 @@
         "prepare": "npx husky install",
         "vercel-build": "prisma generate && prisma migrate deploy && next build",
         "prettier": "npx prettier --write **/*.{tsx,jsx,ts,js,json,yml,yaml,md}",
-        "dev-env": "docker-compose up -d --build && yarn migrate:dev && yarn seed && docker-compose logs -f site"
+        "dev-env": "docker-compose down -v && docker-compose up -d --build && yarn migrate:dev && yarn seed && docker-compose logs -f site"
     },
     "prisma": {
         "seed": "ts-node prisma/seed.ts"
@@ -26,13 +26,15 @@
         "node-fetch": "^3.2.4",
         "react": "18.1.0",
         "react-dom": "18.1.0",
-        "react-toastify": "^9.0.2"
+        "react-toastify": "^9.0.2",
+        "request-ip": "^2.2.0"
     },
     "devDependencies": {
         "@types/node": "17.0.31",
         "@types/node-fetch": "^2.6.1",
         "@types/react": "18.0.8",
         "@types/react-dom": "18.0.3",
+        "@types/request-ip": "^0.0.37",
         "autoprefixer": "^10.4.7",
         "dotenv": "^16.0.1",
         "dotenv-cli": "^5.1.0",

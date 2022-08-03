@@ -1,4 +1,4 @@
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetServerSideProps, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 
 import Button from "../components/button";
@@ -8,15 +8,16 @@ import prisma from "../lib/prisma";
 import { fetchUser } from "../lib/api";
 import { GuildedUser, UserWithBio } from "../types/user";
 
-export const getServerSideProps: GetServerSideProps = async () => {
-    const dbUsers = await prisma.user.findMany({ where: {}, take: 100, include: { defaultBio: true } });
+export const getStaticProps: GetStaticProps = async () => {
+    const dbUsers = await prisma.user.findMany({ where: {}, take: 50, include: { defaultBio: true } });
     const fetchedUsers = await (await Promise.all(dbUsers.map((user) => fetchUser(user.id)))).filter(Boolean);
     const combinedUsers = [];
     for (const [index, fetchedUser] of fetchedUsers.entries()) {
         combinedUsers[index] = { ...dbUsers[index], ...fetchedUser };
     }
 
-    return { props: { users: combinedUsers } };
+	// cache and revalidate every like 12 hours
+    return { props: { users: combinedUsers }, revalidate: 43_200 };
 };
 
 type Props = {
